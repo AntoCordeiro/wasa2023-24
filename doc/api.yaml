@@ -1,6 +1,6 @@
 openapi: 3.0.3
 servers:
-- url: "http://localhost:8080"
+- url: "http://localhost:3000"
 info:
   title: WASAPhoto APIs
   description: |-
@@ -30,11 +30,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  identifier:
-                    type: string
-                    example: "abcdef012345"
+                $ref: "#/components/schemas/User"
         '400':
           $ref: "#/components/responses/BadRequest"
         '500':
@@ -416,18 +412,14 @@ components:
   
   schemas:
     Username:
-      type: object
-      title: Username
       description: |
         The unique username string that functions 
         also as the user id
-      properties:
-        username:
-          type: string
-          minLength: 3
-          maxLength: 16
-          pattern: '^.*?$'
-          example: ObiWan_Kenobi
+      type: string
+      minLength: 3
+      maxLength: 16
+      pattern: '^.*?$'
+      example: ObiWan_Kenobi
           
     Photo:
       description: |
@@ -511,21 +503,10 @@ components:
           description: following count
           type: integer
           example: 56
-        postsCount:
+        postCount:
           description: number of posts by the user
           type: integer
           example: 7
-        photosList:
-          description: the array of photos posted by the user
-          type: array
-          items:
-            $ref: "#/components/schemas/Photo"
-        isFollowed:
-          description: boolean that tells if you are following this user
-          type: boolean
-        isBanned:
-          description: boolean that tells if you banned this user
-          type: boolean
           
     Stream:
       description: | 

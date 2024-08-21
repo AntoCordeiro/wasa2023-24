@@ -34,10 +34,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/types"
 )
 
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {
+	UserLogin(username string) (types.User, error)
 	GetName() (string, error)
 	SetName(name string) error
 
