@@ -1,12 +1,12 @@
 openapi: 3.0.3
 servers:
-- url: "http://localhost:3000"
+- url: "http://localhost:8080"
 info:
   title: WASAPhoto APIs
   description: |-
     This OpenAPI document describes the simplified login API.
     Copy and paste the API from the `paths` key to your OpenAPI document.
-  version: 1.0.1
+  version: 1.0.2
 paths:
   /session:
     post:
@@ -40,7 +40,7 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
           
-  /users/{username}:
+  /profile/{username}:
     get:
       tags: ["User"]
       summary: Get the profile of a specific user
@@ -128,15 +128,15 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "500": 
           $ref: "#/components/responses/InternalServerError"
+     
+  /users/{username}/bans/{banID}:
+    parameters: 
+      - $ref: "#/components/parameters/username"
+      - $ref: "#/components/parameters/banID"
     put:
       tags: ["Ban"]
       operationId: banUser
       description: Add a user to the banned list
-      requestBody:
-        content:
-          application/json:
-            schema: 
-              $ref: "#/components/schemas/Ban"
       responses:
         "201":
           description: User banned successfully.
@@ -151,11 +151,6 @@ paths:
             The user you are trying to ban does not exist
         "500":
           $ref: "#/components/responses/InternalServerError"
-     
-  /users/{username}/bans/{banID}:
-    parameters: 
-      - $ref: "#/components/parameters/username"
-      - $ref: "#/components/parameters/banID"
     delete:
       tags: ["Ban"]
       operationId: unbanUser
@@ -192,29 +187,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "500": 
           $ref: "#/components/responses/InternalServerError"
-    put:
-      tags: ["Follow"]
-      operationId: followUser
-      description: Add a user to the follows list
-      requestBody:
-        content:
-          application/json:
-            schema: 
-              $ref: "#/components/schemas/Follow"
-      responses:
-        "201":
-          description: User followed successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Follow"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          description: |
-            The user you are trying to follow does not exist
-        "500":
-          $ref: "#/components/responses/InternalServerError"
      
   /users/{username}/follows/{followID}:
     parameters: 
@@ -235,6 +207,24 @@ paths:
             The user you are trying to unfollow does not exist
         "500":
           $ref: "#/components/responses/InternalServerError" 
+    put:
+      tags: ["Follow"]
+      operationId: followUser
+      description: Add a user to the follows list
+      responses:
+        "201":
+          description: User followed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Follow"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          description: |
+            The user you are trying to follow does not exist
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   
   /users/{username}/photos:
     parameters:
@@ -287,23 +277,6 @@ paths:
     parameters:
       - $ref: "#/components/parameters/username"
       - $ref: "#/components/parameters/photoID"
-    put:
-      tags: ["Like"]
-      operationId: likePhoto
-      description: Put a like on a photo
-      responses:
-        "200":
-          description: Photo liked successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Like"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          description: Photo Not Found 
-        "500":
-          $ref: "#/components/responses/InternalServerError" 
       
     get:
       tags: ["Like"]
@@ -338,6 +311,23 @@ paths:
       responses:
         "204":
           description: Photo unliked successfully
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          description: Photo Not Found 
+        "500":
+          $ref: "#/components/responses/InternalServerError" 
+    put:
+      tags: ["Like"]
+      operationId: likePhoto
+      description: Put a like on a photo
+      responses:
+        "200":
+          description: Photo liked successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Like"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -449,6 +439,10 @@ components:
           description: unique id of a photo
           type: integer
           example: 1234
+        url:
+          description: url where the image can be found
+          type: string
+          example: "myimageurl.com"
         whoPosted:
           $ref: "#/components/schemas/Username"
         likesCount:
