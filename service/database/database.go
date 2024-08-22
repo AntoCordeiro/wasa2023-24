@@ -59,10 +59,14 @@ func New(db *sql.DB) (AppDatabase, error) {
 
 	// Check if table exists. If not, the database is empty, and we need to create the structure
 	var tableName string
-	err := db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='example_table';`).Scan(&tableName)
+	err := db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='users';`).Scan(&tableName)
 	if errors.Is(err, sql.ErrNoRows) {
-		sqlStmt := `CREATE TABLE example_table (id INTEGER NOT NULL PRIMARY KEY, name TEXT);`
-		_, err = db.Exec(sqlStmt)
+		usersTable := `CREATE TABLE users (
+						username VARCHAR(16) PRIMARY KEY CHECK (LENGTH(username) BETWEEN 3 AND 16),
+						followers INT DEFAULT 0,
+						following INT DEFAULT 0,
+						postCount INT DEFAULT 0);`
+		_, err = db.Exec(usersTable)
 		if err != nil {
 			return nil, fmt.Errorf("error creating database structure: %w", err)
 		}
