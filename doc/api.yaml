@@ -36,7 +36,7 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
           
-  /profile/{username}:
+  /profiles/{username}:
     get:
       tags: ["User"]
       summary: Get the profile of a specific user
