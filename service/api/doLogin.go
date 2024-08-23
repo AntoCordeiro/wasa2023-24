@@ -17,7 +17,7 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	user, err = rt.db.UserLogin(user.Username)
+	user, err = rt.db.UserFirstLogin(user.Username)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

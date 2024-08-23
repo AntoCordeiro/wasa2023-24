@@ -39,7 +39,12 @@ import (
 
 // AppDatabase is the high level interface for the DB
 type AppDatabase interface {
+	// user operations
+	UserFirstLogin(username string) (types.User, error)
 	UserLogin(username string) (types.User, error)
+	UpdateUsername(newUsername string) (error)
+	
+	
 	GetName() (string, error)
 	SetName(name string) error
 
@@ -62,10 +67,11 @@ func New(db *sql.DB) (AppDatabase, error) {
 	err := db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='users';`).Scan(&tableName)
 	if errors.Is(err, sql.ErrNoRows) {
 		usersTable := `CREATE TABLE users (
-						username VARCHAR(16) PRIMARY KEY CHECK (LENGTH(username) BETWEEN 3 AND 16),
-						followers INT DEFAULT 0,
-						following INT DEFAULT 0,
-						postCount INT DEFAULT 0);`
+						userID INTEGER PRIMARY KEY AUTOINCREMENT,
+						username VARCHAR(16) UNIQUE CHECK (LENGTH(username) BETWEEN 3 AND 16),
+						followers INTEGER DEFAULT 0,
+						following INTEGER DEFAULT 0,
+						postCount INTEGER DEFAULT 0);`
 		_, err = db.Exec(usersTable)
 		if err != nil {
 			return nil, fmt.Errorf("error creating database structure: %w", err)
