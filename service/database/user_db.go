@@ -1,9 +1,7 @@
 package database
 
 import (
-	//"database/sql"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/types"
-	"fmt"
 )
 
 
@@ -11,29 +9,25 @@ import (
 // GetName is an example that shows you how to query data
 func (db *appdbimpl) UserFirstLogin(username string) (types.User, error) {
     // Try inserting the username into the database
-    result, err := db.c.Exec("INSERT INTO users(username) VALUES (?) ON CONFLICT (username) DO NOTHING", username)
+    result, err := db.c.Exec("INSERT INTO users(username) VALUES (?)", username)  //fix beacause if error is unique constraint it should retrieve the user anyway
+    if err != nil {
+		var user types.User
+		if err := db.c.QueryRow("SELECT username, ID, followers, following, postCount FROM users WHERE username = ?", username).Scan(&user.Username, &user.ID, &user.Followers, &user.Following, &user.PostCount); err != nil {
+			return user, err
+		}
+		return user, nil
+	}
+    // Get the last insert ID
+    lastInsertID, err := result.LastInsertId()
     if err != nil {
         return types.User{}, err
     }
-
-    // Check if any rows were affected by the insert
-    rowsAffected, err := result.RowsAffected()
-    if err != nil {
-        return types.User{}, err
-    }
-
-    // If no rows were affected, a user with the same username might already exist
-    if rowsAffected == 0 {
-        fmt.Println("Warning: Username", username, "already exists, not inserting new user.")
-        // You can choose to return an error or handle the existing user case differently
-    }
-
-    // Query to get the user data
+    // Retrieve the inserted data using the last insert ID
     var user types.User
-    if err := db.c.QueryRow("SELECT username, ID, followers, following, postCount FROM users WHERE username = ?", username).Scan(&user.Username, &user.ID, &user.Followers, &user.Following, &user.PostCount); err != nil {
+    err = db.c.QueryRow("SELECT username, ID, followers, following, postCount FROM users WHERE ID = ?", lastInsertID).Scan(&user.Username, &user.ID, &user.Followers, &user.Following, &user.PostCount)
+    if err != nil {
         return types.User{}, err
     }
-
     return user, nil
 }
 
@@ -65,7 +59,7 @@ func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, erro
 	}
 	// Get photos uploaded by the user
     var photos []types.Photo
-    rows, err := db.c.Query("SELECT ID, userID, photoData, uploadDate, likesCount, commentsCount FROM photos WHERE user_id = ?", user.ID)
+    rows, err := db.c.Query("SELECT ID, userID, photoData, uploadDate, likesCount, commentsCount FROM photos WHERE userID = ?", user.ID)
     if err != nil {
         return types.UserProfile{}, err
     }

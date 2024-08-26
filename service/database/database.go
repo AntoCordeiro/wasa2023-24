@@ -76,8 +76,11 @@ func New(db *sql.DB) (AppDatabase, error) {
 		if err != nil {
 			return nil, fmt.Errorf("error creating database structure: %w", err)
 		}
+	}
+	err = db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='photos';`).Scan(&tableName)
+	if errors.Is(err, sql.ErrNoRows) {
 		photosTable := `CREATE TABLE photos (
-						ID INTEGER PRIMARY KEY AUTOINCREMENT
+						ID INTEGER PRIMARY KEY AUTOINCREMENT,
 						userID INTEGER NOT NULL,
 						photoData BLOB,
 						uploadDate DATETIME,
