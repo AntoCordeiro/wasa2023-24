@@ -43,7 +43,7 @@ type AppDatabase interface {
 	UserFirstLogin(username string) (types.User, error)
 	UserLogin(username string) (types.User, error)
 	UpdateUsername(newUsername string) (error)
-	
+	GetProfile(profileUsername string) (types.UserProfile, error)	
 	
 	GetName() (string, error)
 	SetName(name string) error
@@ -67,12 +67,24 @@ func New(db *sql.DB) (AppDatabase, error) {
 	err := db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='users';`).Scan(&tableName)
 	if errors.Is(err, sql.ErrNoRows) {
 		usersTable := `CREATE TABLE users (
-						userID INTEGER PRIMARY KEY AUTOINCREMENT,
+						ID INTEGER PRIMARY KEY AUTOINCREMENT,
 						username VARCHAR(16) UNIQUE CHECK (LENGTH(username) BETWEEN 3 AND 16),
 						followers INTEGER DEFAULT 0,
 						following INTEGER DEFAULT 0,
 						postCount INTEGER DEFAULT 0);`
 		_, err = db.Exec(usersTable)
+		if err != nil {
+			return nil, fmt.Errorf("error creating database structure: %w", err)
+		}
+		photosTable := `CREATE TABLE photos (
+						ID INTEGER PRIMARY KEY AUTOINCREMENT
+						userID INTEGER NOT NULL,
+						photoData BLOB,
+						uploadDate DATETIME,
+						likesCount INTEGER,
+						commentsCount INTEGER,
+						FOREIGN KEY (userID) REFERENCES users(ID));`
+		_, err = db.Exec(photosTable)
 		if err != nil {
 			return nil, fmt.Errorf("error creating database structure: %w", err)
 		}

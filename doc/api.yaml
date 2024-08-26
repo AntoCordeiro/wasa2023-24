@@ -36,13 +36,15 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
           
-  /profiles/{username}:
+  /users/{username}/profiles/{username}:
     get:
       tags: ["User"]
       summary: Get the profile of a specific user
       description: | 
         If the searched username, given in the query, exists
-        return the user profile in the response.
+        return the user profile in the response. The first username
+        is used for authentication, while the second one is the searched
+        profile username.
       operationId: getUserProfile
       parameters:
         - $ref: "#/components/parameters/username"
@@ -431,12 +433,12 @@ components:
           description: unique id of a photo
           type: integer
           example: 1234
-        url:
-          description: url where the image can be found
-          type: string
-          example: "myimageurl.com"
         whoPosted:
           $ref: "#/components/schemas/Username"
+        photoData:
+          description: url where the image can be found
+          type: string
+          format: binary
         likesCount:
           description: number of likes of a photo
           type: integer
@@ -450,10 +452,6 @@ components:
           type: string
           format: date-time
           example: '2024-05-04T09:12:28Z'
-        isLiked:
-          description: if the photo is already or not yet liked
-          type: boolean
-          example: true
           
     Comment:
       description: | 
