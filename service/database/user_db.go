@@ -67,7 +67,7 @@ func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, erro
 	// Add each photo to the slice   
 	for rows.Next() {
         var photo types.Photo 
-        if err := rows.Scan(&photo.ID, &photo.UserID, &photo.PhotoData, &photo.UploadDate, &photo.LikesCount, &photo.CommentsCount); err != nil {
+        if err := rows.Scan(&photo.ID, &photo.Username, &photo.PhotoData, &photo.UploadDate, &photo.LikesCount, &photo.CommentsCount); err != nil {
             return types.UserProfile{}, err
         }
         photos = append(photos, photo)

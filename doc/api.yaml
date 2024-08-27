@@ -224,9 +224,9 @@ paths:
         "500":
           $ref: "#/components/responses/InternalServerError"
   
-  /users/{username}/photos:
+  /users/{userID}/photos:
     parameters:
-      - $ref: "#/components/parameters/username"
+      - $ref: "#/components/parameters/userID"
     post:
       tags: ["Photo"]
       operationId: uploadPhoto
@@ -436,7 +436,7 @@ components:
         whoPosted:
           $ref: "#/components/schemas/Username"
         photoData:
-          description: url where the image can be found
+          description: the actual image data
           type: string
           format: binary
         likesCount:

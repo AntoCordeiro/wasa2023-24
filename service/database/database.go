@@ -45,6 +45,9 @@ type AppDatabase interface {
 	UpdateUsername(newUsername string) (error)
 	GetProfile(profileUsername string) (types.UserProfile, error)	
 	
+	// photo operations
+	InsertPhoto(photoObj types.Photo) (error)
+
 	GetName() (string, error)
 	SetName(name string) error
 
