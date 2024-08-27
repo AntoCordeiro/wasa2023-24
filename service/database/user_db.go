@@ -31,10 +31,10 @@ func (db *appdbimpl) UserFirstLogin(username string) (types.User, error) {
     return user, nil
 }
 
-func (db *appdbimpl) UserLogin(username string) (types.User, error) {
+func (db *appdbimpl) UserLogin(userID int) (types.User, error) {
 	//try yo get the user from the database and if it exists return the user object
 	var user types.User
-	if err := db.c.QueryRow("SELECT ID, username, followers, following, postCount FROM users WHERE username = ?", username).Scan(&user.ID, &user.Username, &user.Followers, &user.Following, &user.PostCount); err != nil {
+	if err := db.c.QueryRow("SELECT ID, username, followers, following, postCount FROM users WHERE ID = ?", userID).Scan(&user.ID, &user.Username, &user.Followers, &user.Following, &user.PostCount); err != nil {
 		return types.User{}, err
 	}
 	return user, nil
@@ -54,12 +54,12 @@ func (db *appdbimpl) UpdateUsername(newUsername string) (error) {
 
 func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, error) {
 	var user types.User
-	if err := db.c.QueryRow("SELECT username, ID, followers, following, postCount FROM users WHERE username = ?", profileUsername).Scan(&user.Username, &user.ID, &user.Followers, &user.Following, &user.PostCount); err != nil {
+	if err := db.c.QueryRow("SELECT username, followers, following, postCount FROM users WHERE username = ?", profileUsername).Scan(&user.Username, &user.Followers, &user.Following, &user.PostCount); err != nil {
 		return types.UserProfile{}, err
 	}
 	// Get photos uploaded by the user
     var photos []types.Photo
-    rows, err := db.c.Query("SELECT ID, userID, photoData, uploadDate, likesCount, commentsCount FROM photos WHERE userID = ?", user.ID)
+    rows, err := db.c.Query("SELECT ID, username, photoData, uploadDate, likesCount, commentsCount FROM photos WHERE username = ?", user.Username)
     if err != nil {
         return types.UserProfile{}, err
     }

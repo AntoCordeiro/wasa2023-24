@@ -555,19 +555,26 @@ components:
       required: true
       description: username of a user
     
+    userID:
+      schema:
+        type: integer
+        example: 1234
+      name: userID
+      in: path
+      required: true
+      description: "userID used for login."
+
     photoID:
       schema:
-        description: photoID schema.
         type: integer
         example: 1234
       name: photoID 
       in: path
       required: true
-      description: "**photoID** of a specific photo on a user profile."
+      description: "photoID: id of a specific photo."
     
     commentID:
       schema:
-        description: commentID schema.
         type: string
         pattern: '^.*?$'
         example: "#C1234"
@@ -576,7 +583,7 @@ components:
       name: commentID
       in: path
       required: true
-      description: "**commentID** of a single comment under a photo."
+      description: "commentID: id of a comment under a photo."
 
     likeID:
       schema:
@@ -589,7 +596,7 @@ components:
       name: likeID
       in: path
       required: true
-      description: "**likeID** of a single comment under a photo."
+      description: "likeID: id of a like on a photo."
 
     followID:
       schema:
@@ -602,7 +609,7 @@ components:
       name: followID
       in: path
       required: true
-      description: "**followID** of a single comment under a photo."
+      description: "followID: id of a user-following object."
 
     banID:
       schema:
@@ -615,4 +622,4 @@ components:
       name: banID
       in: path
       required: true
-      description: "**banID** of a single comment under a photo."
+      description: "banID: id of a user-bannedUsername object."

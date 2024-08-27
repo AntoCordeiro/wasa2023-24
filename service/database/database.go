@@ -41,7 +41,7 @@ import (
 type AppDatabase interface {
 	// user operations
 	UserFirstLogin(username string) (types.User, error)
-	UserLogin(username string) (types.User, error)
+	UserLogin(userID int) (types.User, error)
 	UpdateUsername(newUsername string) (error)
 	GetProfile(profileUsername string) (types.UserProfile, error)	
 	
@@ -81,12 +81,12 @@ func New(db *sql.DB) (AppDatabase, error) {
 	if errors.Is(err, sql.ErrNoRows) {
 		photosTable := `CREATE TABLE photos (
 						ID INTEGER PRIMARY KEY AUTOINCREMENT,
-						userID INTEGER NOT NULL,
+						username  VARCHAR(16),
 						photoData BLOB,
 						uploadDate DATETIME,
 						likesCount INTEGER,
 						commentsCount INTEGER,
-						FOREIGN KEY (userID) REFERENCES users(ID));`
+						FOREIGN KEY (username) REFERENCES users(username));`
 		_, err = db.Exec(photosTable)
 		if err != nil {
 			return nil, fmt.Errorf("error creating database structure: %w", err)
