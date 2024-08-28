@@ -6,7 +6,7 @@ info:
   description: |-
     This OpenAPI document describes the simplified login API.
     Copy and paste the API from the `paths` key to your OpenAPI document.
-  version: 1.0.2
+  version: 1.1.0
 paths:
   /session:
     post:
@@ -227,8 +227,14 @@ paths:
       description: |
         Unfollow a user by deleting it from the follows list
       responses:
-        "200":
-          description: user unfollowed successfully
+        "201":
+          description: User followed successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Follow"
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":

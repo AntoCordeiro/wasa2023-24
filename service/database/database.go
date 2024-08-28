@@ -51,7 +51,8 @@ type AppDatabase interface {
 
 	// follow operations
 	StartFollowing(username string, usernameToFollow string) ([]types.Follow, error)
-
+	StopFollowing(username string, followID int) ([]types.Follow, error)
+	
 	GetName() (string, error)
 	SetName(name string) error
 
