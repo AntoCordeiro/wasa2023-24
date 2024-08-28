@@ -79,4 +79,3 @@ func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, erro
         Photos: photos,
     }, nil
 }
-

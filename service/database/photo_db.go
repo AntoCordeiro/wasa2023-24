@@ -12,3 +12,8 @@ func (db *appdbimpl) InsertPhoto(photoObj types.Photo) (error) {
     _, err := db.c.Exec("INSERT INTO photos(username, photoData, uploadDate, likesCount, commentsCount) VALUES (?, ?, ?, ?, ?)", photoObj.Username, photoObj.PhotoData, photoObj.UploadDate, photoObj.LikesCount, photoObj.CommentsCount)  //fix beacause if error is unique constraint it should retrieve the user anyway
     return err
 }
+
+func (db *appdbimpl) RemovePhoto(username string, photoID int) (error) {
+    _, err := db.c.Exec("DELETE FROM photos WHERE username = ? AND ID = ?", username, photoID)
+    return err
+}

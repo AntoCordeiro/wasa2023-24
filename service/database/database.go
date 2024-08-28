@@ -47,6 +47,7 @@ type AppDatabase interface {
 	
 	// photo operations
 	InsertPhoto(photoObj types.Photo) (error)
+	RemovePhoto(username string, photoID int) (error)
 
 	GetName() (string, error)
 	SetName(name string) error
