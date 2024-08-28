@@ -56,3 +56,22 @@ func (db *appdbimpl) StopFollowing(username string, followID int) ([]types.Follo
 
     return followsList, nil
 }
+
+func (db *appdbimpl) GetFollowsList(username string) ([]types.Follow, error) {
+    rows, err := db.c.Query("SELECT ID, username, followsUsername FROM followsTable WHERE username = ?", username)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    var followsList []types.Follow
+    for rows.Next() {
+        var followObj types.Follow
+        if err := rows.Scan(&followObj.ID, &followObj.Username, &followObj.FollowsUsername); err != nil {
+            return nil, err
+        }
+        followsList = append(followsList, followObj)
+    }
+
+    return followsList, nil
+}

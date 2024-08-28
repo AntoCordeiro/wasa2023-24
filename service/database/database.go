@@ -50,6 +50,7 @@ type AppDatabase interface {
 	RemovePhoto(username string, photoID int) (error)
 
 	// follow operations
+	GetFollowsList(username string) ([]types.Follow, error)
 	StartFollowing(username string, usernameToFollow string) ([]types.Follow, error)
 	StopFollowing(username string, followID int) ([]types.Follow, error)
 	
