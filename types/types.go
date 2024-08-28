@@ -23,3 +23,9 @@ type UserProfile struct {
     UserData  User
     Photos []Photo
 }
+
+type Follow struct {
+    ID                  int         `json:"id"`
+    Username            string      `json:"username"`
+    FollowsUsername     string      `json:"followsUsername"`
+}

@@ -126,15 +126,16 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "500": 
           $ref: "#/components/responses/InternalServerError"
-     
-  /users/{username}/bans/{banID}:
-    parameters: 
-      - $ref: "#/components/parameters/username"
-      - $ref: "#/components/parameters/banID"
+
     put:
       tags: ["Ban"]
       operationId: banUser
       description: Add a user to the banned list
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: "#/components/schemas/Username"
       responses:
         "201":
           description: User banned successfully.
@@ -149,6 +150,11 @@ paths:
             The user you are trying to ban does not exist
         "500":
           $ref: "#/components/responses/InternalServerError"
+     
+  /users/{username}/bans/{banID}:
+    parameters: 
+      - $ref: "#/components/parameters/username"
+      - $ref: "#/components/parameters/banID"
     delete:
       tags: ["Ban"]
       operationId: unbanUser
@@ -185,6 +191,31 @@ paths:
           $ref: "#/components/responses/BadRequest"
         "500": 
           $ref: "#/components/responses/InternalServerError"
+    put:
+      tags: ["Follow"]
+      operationId: followUser
+      description: Add a user to the follows list
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: "#/components/schemas/Username"
+      responses:
+        "201":
+          description: User followed successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Follow"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          description: |
+            The user you are trying to follow does not exist
+        "500":
+          $ref: "#/components/responses/InternalServerError"
      
   /users/{username}/follows/{followID}:
     parameters: 
@@ -205,24 +236,6 @@ paths:
             The user you are trying to unfollow does not exist
         "500":
           $ref: "#/components/responses/InternalServerError" 
-    put:
-      tags: ["Follow"]
-      operationId: followUser
-      description: Add a user to the follows list
-      responses:
-        "201":
-          description: User followed successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Follow"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          description: |
-            The user you are trying to follow does not exist
-        "500":
-          $ref: "#/components/responses/InternalServerError"
   
   /users/{userID}/photos:
     parameters:

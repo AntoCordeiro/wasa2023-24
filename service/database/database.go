@@ -49,6 +49,9 @@ type AppDatabase interface {
 	InsertPhoto(photoObj types.Photo) (error)
 	RemovePhoto(username string, photoID int) (error)
 
+	// follow operations
+	StartFollowing(username string, usernameToFollow string) ([]types.Follow, error)
+
 	GetName() (string, error)
 	SetName(name string) error
 
@@ -92,6 +95,19 @@ func New(db *sql.DB) (AppDatabase, error) {
 						commentsCount INTEGER,
 						FOREIGN KEY (username) REFERENCES users(username));`
 		_, err = db.Exec(photosTable)
+		if err != nil {
+			return nil, fmt.Errorf("error creating database structure: %w", err)
+		}
+	}
+	err = db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='followsTable';`).Scan(&tableName)
+	if errors.Is(err, sql.ErrNoRows) {
+		followsTable := `CREATE TABLE followsTable (
+						ID INTEGER PRIMARY KEY AUTOINCREMENT,
+						username  VARCHAR(16),
+						followsUsername VARCHAR(16),
+						FOREIGN KEY (username) REFERENCES users(username),
+						FOREIGN KEY (followsUsername) REFERENCES users(username));`
+		_, err = db.Exec(followsTable)
 		if err != nil {
 			return nil, fmt.Errorf("error creating database structure: %w", err)
 		}
