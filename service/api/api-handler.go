@@ -12,17 +12,17 @@ func (rt *_router) Handler() http.Handler {
 
 	//user
 	rt.router.POST("/session", rt.wrap(rt.doLogin))
-	rt.router.PUT("/users/:userID/username", rt.wrap(rt.setMyUserName))
-	rt.router.GET("/users/:userID/profiles/:profileUsername", rt.wrap(rt.getUserProfile))
-	
+	rt.router.PUT("/users/:myUsername/username", rt.wrap(rt.setMyUserName))
+	rt.router.GET("/users/:myUsername/profiles/:profileUsername", rt.wrap(rt.getUserProfile))
+
 	//photos
-	rt.router.POST("/users/:userID/photos", rt.wrap(rt.uploadPhoto))
-	rt.router.DELETE("/users/:userID/photos/:photoID", rt.wrap(rt.deletePhoto))
-	
+	rt.router.POST("/users/:myUsername/photos", rt.wrap(rt.uploadPhoto))
+	rt.router.DELETE("/users/:myUsername/photos/:photoID", rt.wrap(rt.deletePhoto))
+
 	//follow
-	rt.router.GET("/users/:userID/follows", rt.wrap(rt.getFollows))
-	rt.router.PUT("/users/:userID/follows", rt.wrap(rt.followUser))
-	rt.router.DELETE("/users/:userID/follows/:followID", rt.wrap(rt.unfollowUser))
+	rt.router.GET("/users/:myUsername/follows", rt.wrap(rt.getFollows))
+	rt.router.PUT("/users/:myUsername/follows", rt.wrap(rt.followUser))
+	rt.router.DELETE("/users/:myUsername/follows/:followID", rt.wrap(rt.unfollowUser))
 
 	// Special routes
 	rt.router.GET("/liveness", rt.liveness)

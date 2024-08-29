@@ -153,15 +153,15 @@ func run() error {
 
 	case sig := <-shutdown:
 		logger.Infof("signal %v received, start shutdown", sig)
-		
+
 		//closing the databes
 		err = dbconn.Close()
 		if err != nil {
-   			fmt.Println("Error closing database:", err)
+			logger.Infof("error closing database")
 		}
 		err = os.Remove(cfg.DB.Filename)
 		if err != nil {
-    		fmt.Println("Error deleting database:", err)
+			logger.Infof("error deleting database")
 		}
 
 		// Asking API server to shut down and load shed.

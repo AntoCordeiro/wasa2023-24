@@ -41,19 +41,20 @@ import (
 type AppDatabase interface {
 	// user operations
 	UserFirstLogin(username string) (types.User, error)
-	UserLogin(userID int) (types.User, error)
-	UpdateUsername(newUsername string) (error)
-	GetProfile(profileUsername string) (types.UserProfile, error)	
-	
+	UserLogin(userID int, username string) (types.User, error)
+	UpdateUsername(oldUsername string, newUsername string) error
+	GetProfile(profileUsername string) (types.UserProfile, error)
+	GetID(username string) (int, error)
+
 	// photo operations
-	InsertPhoto(photoObj types.Photo) (error)
-	RemovePhoto(username string, photoID int) (error)
+	InsertPhoto(photoObj types.Photo) error
+	RemovePhoto(userID int, photoID int) error
 
 	// follow operations
-	GetFollowsList(username string) ([]types.Follow, error)
-	StartFollowing(username string, usernameToFollow string) ([]types.Follow, error)
-	StopFollowing(username string, followID int) ([]types.Follow, error)
-	
+	GetFollowsList(userID int) ([]types.Follow, error)
+	StartFollowing(userID int, userIDToFollow int) ([]types.Follow, error)
+	StopFollowing(userID int, followID int) ([]types.Follow, error)
+
 	GetName() (string, error)
 	SetName(name string) error
 
@@ -90,12 +91,12 @@ func New(db *sql.DB) (AppDatabase, error) {
 	if errors.Is(err, sql.ErrNoRows) {
 		photosTable := `CREATE TABLE photos (
 						ID INTEGER PRIMARY KEY AUTOINCREMENT,
-						username  VARCHAR(16),
+						userID  VARCHAR(16),
 						photoData BLOB,
 						uploadDate DATETIME,
 						likesCount INTEGER,
 						commentsCount INTEGER,
-						FOREIGN KEY (username) REFERENCES users(username));`
+						FOREIGN KEY (userID) REFERENCES users(ID));`
 		_, err = db.Exec(photosTable)
 		if err != nil {
 			return nil, fmt.Errorf("error creating database structure: %w", err)
@@ -105,10 +106,10 @@ func New(db *sql.DB) (AppDatabase, error) {
 	if errors.Is(err, sql.ErrNoRows) {
 		followsTable := `CREATE TABLE followsTable (
 						ID INTEGER PRIMARY KEY AUTOINCREMENT,
-						username  VARCHAR(16),
-						followsUsername VARCHAR(16),
-						FOREIGN KEY (username) REFERENCES users(username),
-						FOREIGN KEY (followsUsername) REFERENCES users(username));`
+						userID  VARCHAR(16),
+						followsUserID VARCHAR(16),
+						FOREIGN KEY (userID) REFERENCES users(ID),
+						FOREIGN KEY (followsUserID) REFERENCES users(ID));`
 		_, err = db.Exec(followsTable)
 		if err != nil {
 			return nil, fmt.Errorf("error creating database structure: %w", err)
