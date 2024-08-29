@@ -790,11 +790,11 @@ components:
     
     userID:
       schema:
-        $ref: "#/components/schemas/ID"
+        $ref: "#/components/schemas/Username"
       name: userID
       in: path
       required: true
-      description: "userID used for login."
+      description: "userID is the username of the user that is logged in"
 
     photoID:
       schema:
