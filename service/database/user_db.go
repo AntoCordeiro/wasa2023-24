@@ -10,7 +10,7 @@ func (db *appdbimpl) UserFirstLogin(username string) (types.User, error) {
 	result, err := db.c.Exec("INSERT INTO users(username) VALUES (?)", username) //fix beacause if error is unique constraint it should retrieve the user anyway
 	if err != nil {
 		var user types.User
-		if err := db.c.QueryRow("SELECT username, ID, followers, following, postCount FROM users WHERE username = ?", username).Scan(&user.Username, &user.ID, &user.Followers, &user.Following, &user.PostCount); err != nil {
+		if err := db.c.QueryRow("SELECT username, ID, postCount FROM users WHERE username = ?", username).Scan(&user.Username, &user.ID, &user.PostCount); err != nil {
 			return user, err
 		}
 		return user, nil
@@ -22,7 +22,7 @@ func (db *appdbimpl) UserFirstLogin(username string) (types.User, error) {
 	}
 	// Retrieve the inserted data using the last insert ID
 	var user types.User
-	err = db.c.QueryRow("SELECT username, ID, followers, following, postCount FROM users WHERE ID = ?", lastInsertID).Scan(&user.Username, &user.ID, &user.Followers, &user.Following, &user.PostCount)
+	err = db.c.QueryRow("SELECT username, ID, postCount FROM users WHERE ID = ?", lastInsertID).Scan(&user.Username, &user.ID, &user.PostCount)
 	if err != nil {
 		return types.User{}, err
 	}
@@ -30,9 +30,9 @@ func (db *appdbimpl) UserFirstLogin(username string) (types.User, error) {
 }
 
 func (db *appdbimpl) UserLogin(userID int, username string) (types.User, error) {
-	//try yo get the user from the database and if it exists return the user object
+	// Try yo get the user from the database and if it exists return the user object
 	var user types.User
-	if err := db.c.QueryRow("SELECT ID, username, followers, following, postCount FROM users WHERE ID = ? AND username = ?", userID, username).Scan(&user.ID, &user.Username, &user.Followers, &user.Following, &user.PostCount); err != nil {
+	if err := db.c.QueryRow("SELECT ID, username, postCount FROM users WHERE ID = ? AND username = ?", userID, username).Scan(&user.ID, &user.Username, &user.PostCount); err != nil {
 		return types.User{}, err
 	}
 	return user, nil
@@ -52,11 +52,63 @@ func (db *appdbimpl) UpdateUsername(oldUsername string, newUsername string) erro
 
 func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, error) {
 	var user types.User
-	if err := db.c.QueryRow("SELECT ID, username, followers, following, postCount FROM users WHERE username = ?", profileUsername).Scan(&user.ID, &user.Username, &user.Followers, &user.Following, &user.PostCount); err != nil {
+	if err := db.c.QueryRow("SELECT ID, username, postCount FROM users WHERE username = ?", profileUsername).Scan(&user.ID, &user.Username, &user.PostCount); err != nil {
 		return types.UserProfile{}, err
 	}
+
+
+	// get the list of users that are followed by the logged in user
+	followsRows, err := db.c.Query("SELECT followsUserID FROM follows WHERE userID = ?", user.ID)
+	if err != nil {
+		return types.UserProfile{}, err
+	}
+	defer followsRows.Close()
+
+	var followsList []types.User
+	for followsRows.Next() {
+		var follow types.User
+		if err := followsRows.Scan(&follow.ID); err != nil {
+			return types.UserProfile{}, err
+		}
+		followsList = append(followsList, follow)
+	}
+	if err = followsRows.Err(); err != nil {
+		return types.UserProfile{}, err
+	}
+
+	for i := 0; i < len(followsList); i++ {
+		if err := db.c.QueryRow("SELECT username FROM users WHERE ID = ?", followsList[i].ID).Scan(&followsList[i].Username); err != nil {
+		return types.UserProfile{}, err
+		}
+	}
+
+	// get the list of users who are follow the logged in user
+	followedRows, err := db.c.Query("SELECT userID FROM follows WHERE followsUserID = ?", user.ID)
+	if err != nil {
+		return types.UserProfile{}, err
+	}
+	defer followedRows.Close()
+	
+	var followedList []types.User
+	for followedRows.Next() {
+		var followed types.User
+		if err := followedRows.Scan(&followed.ID); err != nil {
+			return types.UserProfile{}, err
+		}
+		followedList = append(followedList, followed)
+	}
+	if err = followedRows.Err(); err != nil {
+		return types.UserProfile{}, err
+	}
+
+	for i := 0; i < len(followedList); i++ {
+		if err := db.c.QueryRow("SELECT username FROM users WHERE ID = ?", followedList[i].ID).Scan(&followedList[i].Username); err != nil {
+		return types.UserProfile{}, err
+		}
+	}
+
 	// Get photos uploaded by the user
-	rows, err := db.c.Query("SELECT ID, userID, photoData, uploadDate, likesCount, commentsCount FROM photos WHERE userID = ?", user.ID)
+	rows, err := db.c.Query("SELECT ID, userID, photoData, uploadDate, likesCount, commentsCount FROM photos WHERE userID = ? ORDER BY uploadDate DESC", user.ID)
 	if err != nil {
 		return types.UserProfile{}, err
 	}
@@ -78,6 +130,8 @@ func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, erro
 	return types.UserProfile{
 		UserData: user,
 		Photos:   photosList,
+		Follows:  followsList,
+		Followers: followedList,
 	}, nil
 }
 

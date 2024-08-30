@@ -7,12 +7,24 @@ import (
 // GetName is an example that shows you how to query data
 func (db *appdbimpl) AddToBanList(userID int, userIDToBan int) ([]types.Ban, error) {
 	// Try inserting the username into the database
-	_, err := db.c.Exec("INSERT INTO bansTable(userID, bannedID) VALUES (?, ?)", userID, userIDToBan)
+	_, err := db.c.Exec("INSERT INTO bans(userID, bannedID) VALUES (?, ?)", userID, userIDToBan)
+	if err != nil {
+		return nil, err
+	}
+	
+	// Stop following
+	_, err = db.c.Exec("DELETE FROM follows WHERE userID = ?, followsUserID = ?", userID, userIDToBan)
 	if err != nil {
 		return nil, err
 	}
 
-	rows, err := db.c.Query("SELECT ID, userID, bannedID FROM bansTable WHERE userID = ?", userID)
+	// Stop being followed
+	_, err = db.c.Exec("DELETE FROM follows WHERE userID = ?, followsUserID = ?", userIDToBan, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := db.c.Query("SELECT ID, userID, bannedID FROM bans WHERE userID = ?", userID)
 
 	var banList []types.Ban
 	for rows.Next() {
@@ -31,12 +43,12 @@ func (db *appdbimpl) AddToBanList(userID int, userIDToBan int) ([]types.Ban, err
 
 func (db *appdbimpl) RemoveFromBanList(userID int, banID int) ([]types.Ban, error) {
 	// Try inserting the username into the database
-	_, err := db.c.Exec("DELETE FROM bansTable WHERE ID = ?", banID)
+	_, err := db.c.Exec("DELETE FROM bans WHERE ID = ?", banID)
 	if err != nil {
 		return nil, err
 	}
 
-	rows, err := db.c.Query("SELECT ID, userID, bannedID FROM bansTable WHERE userID = ?", userID)
+	rows, err := db.c.Query("SELECT ID, userID, bannedID FROM bans WHERE userID = ?", userID)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +70,7 @@ func (db *appdbimpl) RemoveFromBanList(userID int, banID int) ([]types.Ban, erro
 }
 
 func (db *appdbimpl) GetBanList(userID int) ([]types.Ban, error) {
-	rows, err := db.c.Query("SELECT ID, userID, bannedID FROM bansTable WHERE userID = ?", userID)
+	rows, err := db.c.Query("SELECT ID, userID, bannedID FROM bans WHERE userID = ?", userID)
 	if err != nil {
 		return nil, err
 	}

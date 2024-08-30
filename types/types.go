@@ -7,8 +7,6 @@ import (
 type User struct {
 	Username  string `json:"username"`
 	ID        int    `json:"id"`
-	Followers int    `json:"followers"`
-	Following int    `json:"following"`
 	PostCount int    `json:"postCount"`
 }
 
@@ -22,8 +20,10 @@ type Photo struct {
 }
 
 type UserProfile struct {
-	UserData User
-	Photos   []Photo
+	UserData  User
+	Photos    []Photo
+	Follows	  []User
+	Followers []User
 }
 
 type Follow struct {

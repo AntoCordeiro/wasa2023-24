@@ -12,7 +12,17 @@ func (db *appdbimpl) AddComment(comment types.Comment) ([]types.Comment, error) 
 		return nil, err
 	}
 
-	rows, err := db.c.Query("SELECT ID, userID, photoID, content, date FROM comments WHERE photoID = ?", comment.PhotoID)
+	out, err := db.c.Exec("UPDATE photos SET commentsCount = commentsCount + 1 WHERE ID = ?", comment.PhotoID)
+	if err != nil {
+		return nil, err
+	}
+	affectedRows, err := out.RowsAffected()
+	if err != nil || affectedRows == 0 {
+		return nil, err
+	}
+
+
+	rows, err := db.c.Query("SELECT ID, userID, photoID, content, date FROM comments WHERE photoID = ? ORDER BY date DESC", comment.PhotoID)
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +49,17 @@ func (db *appdbimpl) RemoveComment(userID int, photoID int, commentID int) ([]ty
 		return nil, err
 	}
 
-	rows, err := db.c.Query("SELECT ID, userID, photoID, content, date FROM comments WHERE photoID = ?", photoID)
+	out, err := db.c.Exec("UPDATE photos SET commentsCount = commentsCount - 1 WHERE ID = ?", photoID)
+	if err != nil {
+		return nil, err
+	}
+	affectedRows, err := out.RowsAffected()
+	if err != nil || affectedRows == 0 {
+		return nil, err
+	}
+
+
+	rows, err := db.c.Query("SELECT ID, userID, photoID, content, date FROM comments WHERE photoID = ? ORDER BY date DESC", photoID)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +80,7 @@ func (db *appdbimpl) RemoveComment(userID int, photoID int, commentID int) ([]ty
 }
 
 func (db *appdbimpl) GetCommentsList(photoID int) ([]types.Comment, error) {
-	rows, err := db.c.Query("SELECT ID, userID, photoID, content, date FROM comments WHERE photoID = ?", photoID)
+	rows, err := db.c.Query("SELECT ID, userID, photoID, content, date FROM comments WHERE photoID = ? ORDER BY date DESC", photoID)
 	if err != nil {
 		return nil, err
 	}

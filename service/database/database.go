@@ -62,7 +62,7 @@ type AppDatabase interface {
 
 	// likes operations
 	GetLikesList(userID int, photoID int) ([]types.Like, error)
-	AddLike(userID int, photoID int) ([]types.Like, error)
+	AddLike(like types.Like) ([]types.Like, error)
 	RemoveLike(likeID int, userID int, photoID int) ([]types.Like, error)
 
 	// comments operations
@@ -94,8 +94,6 @@ func New(db *sql.DB) (AppDatabase, error) {
 		usersTable := `CREATE TABLE users (
 						ID INTEGER PRIMARY KEY AUTOINCREMENT,
 						username VARCHAR(16) UNIQUE CHECK (LENGTH(username) BETWEEN 3 AND 16),
-						followers INTEGER DEFAULT 0,
-						following INTEGER DEFAULT 0,
 						postCount INTEGER DEFAULT 0);`
 		_, err = db.Exec(usersTable)
 		if err != nil {
@@ -119,7 +117,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 	}
 	err = db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='followsTable';`).Scan(&tableName)
 	if errors.Is(err, sql.ErrNoRows) {
-		followsTable := `CREATE TABLE followsTable (
+		followsTable := `CREATE TABLE follows (
 						ID INTEGER PRIMARY KEY AUTOINCREMENT,
 						userID  INTEGER,
 						followsUserID INTEGER,
@@ -132,7 +130,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 	}
 	err = db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='bansTable';`).Scan(&tableName)
 	if errors.Is(err, sql.ErrNoRows) {
-		bansTable := `CREATE TABLE bansTable (
+		bansTable := `CREATE TABLE bans (
 						ID INTEGER PRIMARY KEY AUTOINCREMENT,
 						userID  INTEGER,
 						bannedID INTEGER,
