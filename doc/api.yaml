@@ -6,7 +6,7 @@ info:
   description: |-
     This OpenAPI document describes the simplified login API.
     Copy and paste the API from the `paths` key to your OpenAPI document.
-  version: 2.0.1
+  version: 2.0.2
 tags:
   - name: Login
     description: User login function
@@ -38,12 +38,14 @@ paths:
         content:
           application/json:
             schema:
+              description: the object that contains the username
               type: object
               properties:
                 name:
+                  description: the username string
                   type: string
                   example: Maria
-                  pattern: 'ˆ.*?$'
+                  pattern: '^.*?$'
                   minLength: 3
                   maxLength: 16
         required: true
@@ -53,9 +55,11 @@ paths:
           content:
             application/json:
               schema:
+                description: the object that contains the user id
                 type: object
                 properties:
                   identifier:
+                    description: the user id
                     type: integer
                     example: 1234
                     minimum: 0
@@ -218,10 +222,10 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
      
-  /users/{userID}/bans/{username}:
+  /users/{userID}/bans/{banID}:
     parameters:
       - $ref: "#/components/parameters/userID"
-      - $ref: "#/components/parameters/username"
+      - $ref: "#/components/parameters/banID"
     delete:
       security: 
         - bearerAuth: []
@@ -303,10 +307,10 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
      
-  /users/{userID}/follows/{username}:
+  /users/{userID}/follows/{followID}:
     parameters: 
       - $ref: "#/components/parameters/userID"
-      - $ref: "#/components/parameters/username"
+      - $ref: "#/components/parameters/followID"
     delete:
       security: 
         - bearerAuth: []
@@ -318,8 +322,8 @@ paths:
         followed users list. The username of the person to unfollow must be
         specified in the path.
       responses:
-        "201":
-          description: User followed successfully
+        "200":
+          description: User unfollowed successfully
           content:
             application/json:
               schema:
@@ -353,6 +357,7 @@ paths:
               type: object
               properties:
                  file:
+                  description: the image file uploaded by the user
                   type: string
                   format: binary
                   minLength: 0
@@ -607,7 +612,7 @@ components:
           description: the username string
           type: string
           example: ObiWan_Kenobi
-          pattern: 'ˆ.*?$'
+          pattern: '^.*?$'
           minLength: 3
           maxLength: 16
       
