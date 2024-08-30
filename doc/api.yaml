@@ -254,29 +254,6 @@ paths:
   /users/{userID}/follows:
     parameters: 
       - $ref: "#/components/parameters/userID"
-    get:
-      security: 
-        - bearerAuth: []
-      tags: ["Follow"]
-      operationId: getFollows
-      summary: Get the list of followed users
-      description: |
-        The logged-in user's list of followed users will be returned as an array
-      responses:
-        '200':
-          description: follows list successfully retrieved
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FollowsList"
-        '400':
-          $ref: "#/components/responses/BadRequest"
-        '401':
-          $ref: "#/components/responses/UnauthorizedError"
-        '404':
-          $ref: "#/components/responses/NotFoundError"
-        '500':
-          $ref: "#/components/responses/InternalServerError"
     put:
       security: 
         - bearerAuth: []

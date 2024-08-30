@@ -45,6 +45,7 @@ type AppDatabase interface {
 	UpdateUsername(oldUsername string, newUsername string) error
 	GetProfile(profileUsername string) (types.UserProfile, error)
 	GetID(username string) (int, error)
+	GetStream(userID int) ([]types.Photo, error)
 
 	// photo operations
 	InsertPhoto(photoObj types.Photo) error

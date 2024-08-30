@@ -11,7 +11,7 @@ func (db *appdbimpl) AddToBanList(userID int, userIDToBan int) ([]types.Ban, err
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Stop following
 	_, err = db.c.Exec("DELETE FROM follows WHERE userID = ?, followsUserID = ?", userID, userIDToBan)
 	if err != nil {

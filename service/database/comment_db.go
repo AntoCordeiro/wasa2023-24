@@ -21,7 +21,6 @@ func (db *appdbimpl) AddComment(comment types.Comment) ([]types.Comment, error) 
 		return nil, err
 	}
 
-
 	rows, err := db.c.Query("SELECT ID, userID, photoID, content, date FROM comments WHERE photoID = ? ORDER BY date DESC", comment.PhotoID)
 	if err != nil {
 		return nil, err
@@ -57,7 +56,6 @@ func (db *appdbimpl) RemoveComment(userID int, photoID int, commentID int) ([]ty
 	if err != nil || affectedRows == 0 {
 		return nil, err
 	}
-
 
 	rows, err := db.c.Query("SELECT ID, userID, photoID, content, date FROM comments WHERE photoID = ? ORDER BY date DESC", photoID)
 	if err != nil {

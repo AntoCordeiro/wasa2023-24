@@ -56,7 +56,6 @@ func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, erro
 		return types.UserProfile{}, err
 	}
 
-
 	// get the list of users that are followed by the logged in user
 	followsRows, err := db.c.Query("SELECT followsUserID FROM follows WHERE userID = ?", user.ID)
 	if err != nil {
@@ -78,7 +77,7 @@ func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, erro
 
 	for i := 0; i < len(followsList); i++ {
 		if err := db.c.QueryRow("SELECT username FROM users WHERE ID = ?", followsList[i].ID).Scan(&followsList[i].Username); err != nil {
-		return types.UserProfile{}, err
+			return types.UserProfile{}, err
 		}
 	}
 
@@ -88,7 +87,7 @@ func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, erro
 		return types.UserProfile{}, err
 	}
 	defer followedRows.Close()
-	
+
 	var followedList []types.User
 	for followedRows.Next() {
 		var followed types.User
@@ -103,7 +102,7 @@ func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, erro
 
 	for i := 0; i < len(followedList); i++ {
 		if err := db.c.QueryRow("SELECT username FROM users WHERE ID = ?", followedList[i].ID).Scan(&followedList[i].Username); err != nil {
-		return types.UserProfile{}, err
+			return types.UserProfile{}, err
 		}
 	}
 
@@ -128,9 +127,9 @@ func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, erro
 
 	// Create and return the user profile
 	return types.UserProfile{
-		UserData: user,
-		Photos:   photosList,
-		Follows:  followsList,
+		UserData:  user,
+		Photos:    photosList,
+		Follows:   followsList,
 		Followers: followedList,
 	}, nil
 }
@@ -141,4 +140,27 @@ func (db *appdbimpl) GetID(username string) (int, error) {
 		return 0, err
 	}
 	return userID, nil
+}
+
+func (db *appdbimpl) GetStream(userID int) ([]types.Photo, error) {
+	// get the list of photos posted by users who the logged in user follows
+	rows, err := db.c.Query("SELECT ID, userID, photoData, uploadDate, likesCount, commentsCount FROM photos WHERE userID IN (SELECT followsUserID FROM follows WHERE userID = ?) ORDER BY uploadDate DESC", userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var MyStream []types.Photo
+	for rows.Next() {
+		var photo types.Photo
+		if err := rows.Scan(&photo.ID, &photo.UserID, &photo.PhotoData, &photo.UploadDate, &photo.LikesCount, &photo.CommentsCount); err != nil {
+			return nil, err
+		}
+		MyStream = append(MyStream, photo)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return MyStream, nil
 }

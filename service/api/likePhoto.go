@@ -31,10 +31,10 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 		return
 	}
 
-	likeObj := types.Like {
-		UserID: 	userID,
-		PhotoID: 	photoID,
-		Date: 		time.Now(),
+	likeObj := types.Like{
+		UserID:  userID,
+		PhotoID: photoID,
+		Date:    time.Now(),
 	}
 
 	likesList, err := rt.db.AddLike(likeObj)

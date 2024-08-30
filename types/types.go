@@ -22,7 +22,7 @@ type Photo struct {
 type UserProfile struct {
 	UserData  User
 	Photos    []Photo
-	Follows	  []User
+	Follows   []User
 	Followers []User
 }
 
