@@ -70,6 +70,9 @@ func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, erro
 		}
 		photosList = append(photosList, photo)
 	}
+	if err = rows.Err(); err != nil {
+		return types.UserProfile{}, err
+	}
 
 	// Create and return the user profile
 	return types.UserProfile{

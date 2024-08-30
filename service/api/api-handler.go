@@ -24,6 +24,21 @@ func (rt *_router) Handler() http.Handler {
 	rt.router.PUT("/users/:myUsername/follows", rt.wrap(rt.followUser))
 	rt.router.DELETE("/users/:myUsername/follows/:followID", rt.wrap(rt.unfollowUser))
 
+	// ban
+	rt.router.GET("/users/:myUsername/bans", rt.wrap(rt.getBans))
+	rt.router.PUT("/users/:myUsername/bans", rt.wrap(rt.banUser))
+	rt.router.DELETE("/users/:myUsername/bans/:banID", rt.wrap(rt.unbanUser))
+
+	// like
+	rt.router.GET("/users/:myUsername/photos/:photoID/likes", rt.wrap(rt.getLikes))
+	rt.router.PUT("/users/:myUsername/photos/:photoID/likes", rt.wrap(rt.likePhoto))
+	rt.router.DELETE("/users/:myUsername/photos/:photoID/likes/:likeID", rt.wrap(rt.unlikePhoto))
+
+	// comment
+	rt.router.GET("/users/:myUsername/photos/:photoID/comments", rt.wrap(rt.getComments))
+	rt.router.POST("/users/:myUsername/photos/:photoID/comments", rt.wrap(rt.commentPhoto))
+	rt.router.DELETE("/users/:myUsername/photos/:photoID/comments/:commentID", rt.wrap(rt.uncommentPhoto))
+
 	// Special routes
 	rt.router.GET("/liveness", rt.liveness)
 

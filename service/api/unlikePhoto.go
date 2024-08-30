@@ -11,7 +11,7 @@ import (
 )
 
 // getHelloWorld is an example of HTTP endpoint that returns "Hello world!" as a plain text
-func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	// first check  the user is already registered, otherwise negate the action
 	userID, err := GetUserID(r.Header.Get("Authorization"))
 	if err != nil {
@@ -24,13 +24,19 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	followIDparam, err := strconv.Atoi(ps.ByName("followID"))
+	photoID, err := strconv.Atoi(ps.ByName("photoID"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	followsList, err := rt.db.StopFollowing(userObj.ID, followIDparam)
+	likeID, err := strconv.Atoi(ps.ByName("likeID"))
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	likesList, err := rt.db.RemoveLike(likeID, userObj.ID, photoID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -38,5 +44,5 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(followsList)
+	_ = json.NewEncoder(w).Encode(likesList)
 }

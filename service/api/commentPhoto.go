@@ -5,32 +5,44 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 	//"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
-	//"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/types"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
+	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/types"
 	"strconv"
+	"time"
 )
 
 // getHelloWorld is an example of HTTP endpoint that returns "Hello world!" as a plain text
-func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	// first check  the user is already registered, otherwise negate the action
 	userID, err := GetUserID(r.Header.Get("Authorization"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 	}
 
-	userObj, err := rt.db.UserLogin(userID, ps.ByName("myUsername"))
+	_, err = rt.db.UserLogin(userID, ps.ByName("myUsername"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	followIDparam, err := strconv.Atoi(ps.ByName("followID"))
+	photoID, err := strconv.Atoi(ps.ByName("photoID"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	followsList, err := rt.db.StopFollowing(userObj.ID, followIDparam)
+	var commentObj types.Comment
+	err = json.NewDecoder(r.Body).Decode(&commentObj)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	commentObj.UserID = userID
+	commentObj.Date = time.Now()
+	commentObj.PhotoID = photoID
+
+	commentsList, err := rt.db.AddComment(commentObj)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -38,5 +50,5 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(followsList)
+	_ = json.NewEncoder(w).Encode(commentsList)
 }

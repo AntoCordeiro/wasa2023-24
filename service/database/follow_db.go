@@ -26,6 +26,9 @@ func (db *appdbimpl) StartFollowing(userID int, userIDToFollow int) ([]types.Fol
 		}
 		followsList = append(followsList, followObj)
 	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
 
 	return followsList, nil
 }
@@ -51,6 +54,9 @@ func (db *appdbimpl) StopFollowing(userID int, followID int) ([]types.Follow, er
 		}
 		followsList = append(followsList, followObj)
 	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
 
 	return followsList, nil
 }
@@ -69,6 +75,9 @@ func (db *appdbimpl) GetFollowsList(userID int) ([]types.Follow, error) {
 			return nil, err
 		}
 		followsList = append(followsList, followObj)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return followsList, nil

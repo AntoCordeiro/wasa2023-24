@@ -31,3 +31,24 @@ type Follow struct {
 	UserID        int `json:"userID"`
 	FollowsUserID int `json:"followsUserID"`
 }
+
+type Ban struct {
+	ID       int `json:"id"`
+	UserID   int `json:"userID"`
+	BannedID int `json:"bannedID"`
+}
+
+type Like struct {
+	ID      int       `json:"id"`
+	UserID  int       `json:"userID"`
+	PhotoID int       `json:"photoID"`
+	Date    time.Time `json:"date"`
+}
+
+type Comment struct {
+	ID      int       `json:"id"`
+	UserID  int       `json:"userID"`
+	PhotoID int       `json:"photoID"`
+	Content string    `json:"content"`
+	Date    time.Time `json:"date"`
+}

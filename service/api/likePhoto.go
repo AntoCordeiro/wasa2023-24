@@ -5,13 +5,13 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 	//"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
-	//"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/types"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
+	//"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/types"
 	"strconv"
 )
 
 // getHelloWorld is an example of HTTP endpoint that returns "Hello world!" as a plain text
-func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
+func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
 	// first check  the user is already registered, otherwise negate the action
 	userID, err := GetUserID(r.Header.Get("Authorization"))
 	if err != nil {
@@ -24,13 +24,13 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	followIDparam, err := strconv.Atoi(ps.ByName("followID"))
+	photoID, err := strconv.Atoi(ps.ByName("photoID"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	followsList, err := rt.db.StopFollowing(userObj.ID, followIDparam)
+	likesList, err := rt.db.AddLike(userObj.ID, photoID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -38,5 +38,5 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(followsList)
+	_ = json.NewEncoder(w).Encode(likesList)
 }

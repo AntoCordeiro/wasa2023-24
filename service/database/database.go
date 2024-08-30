@@ -55,6 +55,21 @@ type AppDatabase interface {
 	StartFollowing(userID int, userIDToFollow int) ([]types.Follow, error)
 	StopFollowing(userID int, followID int) ([]types.Follow, error)
 
+	// ban operations
+	GetBanList(userID int) ([]types.Ban, error)
+	AddToBanList(userID int, userIDToBan int) ([]types.Ban, error)
+	RemoveFromBanList(userID int, banID int) ([]types.Ban, error)
+
+	// likes operations
+	GetLikesList(userID int, photoID int) ([]types.Like, error)
+	AddLike(userID int, photoID int) ([]types.Like, error)
+	RemoveLike(likeID int, userID int, photoID int) ([]types.Like, error)
+
+	// comments operations
+	GetCommentsList(photoID int) ([]types.Comment, error)
+	AddComment(comment types.Comment) ([]types.Comment, error)
+	RemoveComment(userID int, photoID int, commentID int) ([]types.Comment, error)
+
 	GetName() (string, error)
 	SetName(name string) error
 
@@ -106,11 +121,53 @@ func New(db *sql.DB) (AppDatabase, error) {
 	if errors.Is(err, sql.ErrNoRows) {
 		followsTable := `CREATE TABLE followsTable (
 						ID INTEGER PRIMARY KEY AUTOINCREMENT,
-						userID  VARCHAR(16),
-						followsUserID VARCHAR(16),
+						userID  INTEGER,
+						followsUserID INTEGER,
 						FOREIGN KEY (userID) REFERENCES users(ID),
 						FOREIGN KEY (followsUserID) REFERENCES users(ID));`
 		_, err = db.Exec(followsTable)
+		if err != nil {
+			return nil, fmt.Errorf("error creating database structure: %w", err)
+		}
+	}
+	err = db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='bansTable';`).Scan(&tableName)
+	if errors.Is(err, sql.ErrNoRows) {
+		bansTable := `CREATE TABLE bansTable (
+						ID INTEGER PRIMARY KEY AUTOINCREMENT,
+						userID  INTEGER,
+						bannedID INTEGER,
+						FOREIGN KEY (userID) REFERENCES users(ID),
+						FOREIGN KEY (bannedID) REFERENCES users(ID));`
+		_, err = db.Exec(bansTable)
+		if err != nil {
+			return nil, fmt.Errorf("error creating database structure: %w", err)
+		}
+	}
+	err = db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='likes';`).Scan(&tableName)
+	if errors.Is(err, sql.ErrNoRows) {
+		likesTable := `CREATE TABLE likes (
+						ID INTEGER PRIMARY KEY AUTOINCREMENT,
+						userID  INTEGER,
+						photoID INTEGER,
+						date DATETIME,
+						FOREIGN KEY (userID) REFERENCES users(ID),
+						FOREIGN KEY (photoID) REFERENCES photos(ID));`
+		_, err = db.Exec(likesTable)
+		if err != nil {
+			return nil, fmt.Errorf("error creating database structure: %w", err)
+		}
+	}
+	err = db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='comments';`).Scan(&tableName)
+	if errors.Is(err, sql.ErrNoRows) {
+		commentsTable := `CREATE TABLE comments (
+						ID INTEGER PRIMARY KEY AUTOINCREMENT,
+						userID  INTEGER,
+						photoID INTEGER,
+						content TEXT,
+						date DATETIME,
+						FOREIGN KEY (userID) REFERENCES users(ID),
+						FOREIGN KEY (photoID) REFERENCES photos(ID));`
+		_, err = db.Exec(commentsTable)
 		if err != nil {
 			return nil, fmt.Errorf("error creating database structure: %w", err)
 		}
