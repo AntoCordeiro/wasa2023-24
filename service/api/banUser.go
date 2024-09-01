@@ -4,14 +4,12 @@ import (
 	"encoding/json"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
-	//"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/types"
 )
 
-// getHelloWorld is an example of HTTP endpoint that returns "Hello world!" as a plain text
 func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	// first check  the user is already registered, otherwise negate the action
+	// Authenticate user
 	userID, err := GetUserID(r.Header.Get("Authorization"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
@@ -23,6 +21,7 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
+	// Get the username of the user to ban from the request body
 	var userToBan types.User
 	err = json.NewDecoder(r.Body).Decode(&userToBan)
 	if err != nil || userToBan.Username == userObj.Username {
@@ -35,6 +34,7 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
+	// Add the user to the banned list and encode the returned banned list in the response
 	banList, err := rt.db.AddToBanList(userObj.ID, userToBan.ID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -4,16 +4,14 @@ import (
 	"encoding/json"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
-	//"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/types"
 	"strconv"
 	"time"
 )
 
-// getHelloWorld is an example of HTTP endpoint that returns "Hello world!" as a plain text
 func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	// first check  the user is already registered, otherwise negate the action
+	// Authenticate user
 	userID, err := GetUserID(r.Header.Get("Authorization"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
@@ -25,12 +23,14 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
+	// Get the photo id from the path
 	photoID, err := strconv.Atoi(ps.ByName("photoID"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	// Take the content of the comment in the request body
 	var commentObj types.Comment
 	err = json.NewDecoder(r.Body).Decode(&commentObj)
 	if err != nil {
@@ -38,6 +38,7 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
+	// Add the comment under the photo  and encode the returned comments list in the response
 	commentObj.UserID = userID
 	commentObj.Date = time.Now()
 	commentObj.PhotoID = photoID

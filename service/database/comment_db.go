@@ -4,14 +4,14 @@ import (
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/types"
 )
 
-// GetName is an example that shows you how to query data
 func (db *appdbimpl) AddComment(comment types.Comment) ([]types.Comment, error) {
-	// Try inserting the username into the database
+	// Insert the new comment in the comments table
 	_, err := db.c.Exec("INSERT INTO comments(userID, photoID, content, date) VALUES (?, ?, ?, ?)", comment.UserID, comment.PhotoID, comment.Content, comment.Date)
 	if err != nil {
 		return nil, err
 	}
 
+	// Update the comments count of the photo in the phtos table
 	out, err := db.c.Exec("UPDATE photos SET commentsCount = commentsCount + 1 WHERE ID = ?", comment.PhotoID)
 	if err != nil {
 		return nil, err
@@ -21,6 +21,7 @@ func (db *appdbimpl) AddComment(comment types.Comment) ([]types.Comment, error) 
 		return nil, err
 	}
 
+	// Get the list of comments under a photo
 	rows, err := db.c.Query("SELECT ID, userID, photoID, content, date FROM comments WHERE photoID = ? ORDER BY date DESC", comment.PhotoID)
 	if err != nil {
 		return nil, err

@@ -4,9 +4,8 @@ import (
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/types"
 )
 
-// GetName is an example that shows you how to query data
 func (db *appdbimpl) UserFirstLogin(username string) (types.User, error) {
-	// Try inserting the username into the database
+	// Insert the user in the database and get the assigned user id
 	result, err := db.c.Exec("INSERT INTO users(username) VALUES (?)", username) //fix beacause if error is unique constraint it should retrieve the user anyway
 	if err != nil {
 		var user types.User
@@ -15,12 +14,12 @@ func (db *appdbimpl) UserFirstLogin(username string) (types.User, error) {
 		}
 		return user, nil
 	}
-	// Get the last insert ID
+	
 	lastInsertID, err := result.LastInsertId()
 	if err != nil {
 		return types.User{}, err
 	}
-	// Retrieve the inserted data using the last insert ID
+	// Retrieve the user id and return a user object
 	var user types.User
 	err = db.c.QueryRow("SELECT username, ID, postCount FROM users WHERE ID = ?", lastInsertID).Scan(&user.Username, &user.ID, &user.PostCount)
 	if err != nil {
@@ -39,6 +38,7 @@ func (db *appdbimpl) UserLogin(userID int, username string) (types.User, error) 
 }
 
 func (db *appdbimpl) UpdateUsername(oldUsername string, newUsername string) error {
+	// Update the username in the users table
 	out, err := db.c.Exec("UPDATE users SET username = ? WHERE username = ?", newUsername, oldUsername)
 	if err != nil {
 		return err
@@ -51,12 +51,13 @@ func (db *appdbimpl) UpdateUsername(oldUsername string, newUsername string) erro
 }
 
 func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, error) {
+	// Get the user informations from the users table
 	var user types.User
 	if err := db.c.QueryRow("SELECT ID, username, postCount FROM users WHERE username = ?", profileUsername).Scan(&user.ID, &user.Username, &user.PostCount); err != nil {
 		return types.UserProfile{}, err
 	}
 
-	// get the list of users that are followed by the logged in user
+	// Get the list of users that are followed by the logged in user
 	followsRows, err := db.c.Query("SELECT followsUserID FROM follows WHERE userID = ?", user.ID)
 	if err != nil {
 		return types.UserProfile{}, err
@@ -81,7 +82,7 @@ func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, erro
 		}
 	}
 
-	// get the list of users who are follow the logged in user
+	// Get the list of users who follow the logged in user
 	followedRows, err := db.c.Query("SELECT userID FROM follows WHERE followsUserID = ?", user.ID)
 	if err != nil {
 		return types.UserProfile{}, err
@@ -112,7 +113,7 @@ func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, erro
 		return types.UserProfile{}, err
 	}
 	defer rows.Close()
-	// Add each photo to the slice
+
 	var photosList []types.Photo
 	for rows.Next() {
 		var photo types.Photo
@@ -143,7 +144,7 @@ func (db *appdbimpl) GetID(username string) (int, error) {
 }
 
 func (db *appdbimpl) GetStream(userID int) ([]types.Photo, error) {
-	// get the list of photos posted by users who the logged in user follows
+	// Get the list of photos posted by users who the logged in user follows
 	rows, err := db.c.Query("SELECT ID, userID, photoData, uploadDate, likesCount, commentsCount FROM photos WHERE userID IN (SELECT followsUserID FROM follows WHERE userID = ?) ORDER BY uploadDate DESC", userID)
 	if err != nil {
 		return nil, err

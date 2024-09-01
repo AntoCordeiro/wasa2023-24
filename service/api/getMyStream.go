@@ -8,23 +8,23 @@ import (
 )
 
 func (rt *_router) getMyStream(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	// Authentication: check  the user is already registered, otherwise negate the action
+	// Authenticate user
 	userID, err := GetUserID(r.Header.Get("Authorization"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 	}
-
 	_, err = rt.db.UserLogin(userID, ps.ByName("myUsername"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	// Get the stream of the user and encode it in the response
 	MyStream, err := rt.db.GetStream(userID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
-	} //Have to add the check if the user is banned
+	}
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(MyStream)

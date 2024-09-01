@@ -8,18 +8,18 @@ import (
 )
 
 func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	// Authentication: check  the user is already registered, otherwise negate the action
+	// Authenticate user
 	userID, err := GetUserID(r.Header.Get("Authorization"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 	}
-
 	_, err = rt.db.UserLogin(userID, ps.ByName("myUsername"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	// Get the profile of the user specified in the path and encode it in the response
 	userProfile, err := rt.db.GetProfile(ps.ByName("profileUsername"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

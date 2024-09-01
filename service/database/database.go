@@ -71,9 +71,6 @@ type AppDatabase interface {
 	AddComment(comment types.Comment) ([]types.Comment, error)
 	RemoveComment(userID int, photoID int, commentID int) ([]types.Comment, error)
 
-	GetName() (string, error)
-	SetName(name string) error
-
 	Ping() error
 }
 
@@ -101,6 +98,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 			return nil, fmt.Errorf("error creating database structure: %w", err)
 		}
 	}
+	// Create the photos table
 	err = db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='photos';`).Scan(&tableName)
 	if errors.Is(err, sql.ErrNoRows) {
 		photosTable := `CREATE TABLE photos (
@@ -116,6 +114,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 			return nil, fmt.Errorf("error creating database structure: %w", err)
 		}
 	}
+	// Create the follows table
 	err = db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='followsTable';`).Scan(&tableName)
 	if errors.Is(err, sql.ErrNoRows) {
 		followsTable := `CREATE TABLE follows (
@@ -128,7 +127,8 @@ func New(db *sql.DB) (AppDatabase, error) {
 		if err != nil {
 			return nil, fmt.Errorf("error creating database structure: %w", err)
 		}
-	}
+	}	
+	// Create the bans table
 	err = db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='bansTable';`).Scan(&tableName)
 	if errors.Is(err, sql.ErrNoRows) {
 		bansTable := `CREATE TABLE bans (
@@ -142,6 +142,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 			return nil, fmt.Errorf("error creating database structure: %w", err)
 		}
 	}
+	// Create the likes table
 	err = db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='likes';`).Scan(&tableName)
 	if errors.Is(err, sql.ErrNoRows) {
 		likesTable := `CREATE TABLE likes (
@@ -156,6 +157,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 			return nil, fmt.Errorf("error creating database structure: %w", err)
 		}
 	}
+	// Create the comments table
 	err = db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='comments';`).Scan(&tableName)
 	if errors.Is(err, sql.ErrNoRows) {
 		commentsTable := `CREATE TABLE comments (

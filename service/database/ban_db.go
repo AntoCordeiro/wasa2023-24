@@ -24,6 +24,7 @@ func (db *appdbimpl) AddToBanList(userID int, userIDToBan int) ([]types.Ban, err
 		return nil, err
 	}
 
+	// Get and return the updated banned list
 	rows, err := db.c.Query("SELECT ID, userID, bannedID FROM bans WHERE userID = ?", userID)
 
 	var banList []types.Ban
@@ -42,12 +43,13 @@ func (db *appdbimpl) AddToBanList(userID int, userIDToBan int) ([]types.Ban, err
 }
 
 func (db *appdbimpl) RemoveFromBanList(userID int, banID int) ([]types.Ban, error) {
-	// Try inserting the username into the database
+	// Delete the ban from the table
 	_, err := db.c.Exec("DELETE FROM bans WHERE ID = ?", banID)
 	if err != nil {
 		return nil, err
 	}
 
+	// Get and return the updated banned list
 	rows, err := db.c.Query("SELECT ID, userID, bannedID FROM bans WHERE userID = ?", userID)
 	if err != nil {
 		return nil, err
@@ -70,6 +72,7 @@ func (db *appdbimpl) RemoveFromBanList(userID int, banID int) ([]types.Ban, erro
 }
 
 func (db *appdbimpl) GetBanList(userID int) ([]types.Ban, error) {
+	// Get and return the updated banned list
 	rows, err := db.c.Query("SELECT ID, userID, bannedID FROM bans WHERE userID = ?", userID)
 	if err != nil {
 		return nil, err

@@ -3,16 +3,12 @@ package api
 import (
 	"github.com/julienschmidt/httprouter"
 	"net/http"
-	//"encoding/json"
-	//"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/database"
-	//"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/types"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"strconv"
 )
 
-// getHelloWorld is an example of HTTP endpoint that returns "Hello world!" as a plain text
 func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
-	// first check  the user is already registered, otherwise negate the action
+	// Authenticate user
 	userID, err := GetUserID(r.Header.Get("Authorization"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
@@ -24,11 +20,14 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
+	// Get the id of the photo to delete from the path
 	photoIDparam, err := strconv.Atoi(ps.ByName("photoID"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	// Remove the photo
 	err = rt.db.RemovePhoto(userObj.ID, photoIDparam)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
