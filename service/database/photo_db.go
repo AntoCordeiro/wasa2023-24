@@ -18,7 +18,7 @@ func (db *appdbimpl) InsertPhoto(photoObj types.Photo) error {
 		return err
 	}
 
-	return err
+	return nil
 }
 
 func (db *appdbimpl) RemovePhoto(userID int, photoID int) error {
