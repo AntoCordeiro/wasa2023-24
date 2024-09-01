@@ -689,9 +689,11 @@ components:
       type: object
       properties:
         bans:
+          description: "the bans array"
           type: array
           items:
             type: object
+            description: "made of the ban object id and the username of banned user"
             properties:
               ID:
                 $ref: "#/components/schemas/ID"
