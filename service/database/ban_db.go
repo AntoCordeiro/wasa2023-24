@@ -24,6 +24,18 @@ func (db *appdbimpl) AddToBanList(userID int, userIDToBan int) ([]types.Ban, err
 		return nil, err
 	}
 
+	// Delete comments of banned user under the logged in user's photos
+	_, err = db.c.Exec("DELETE FROM comments WHERE userID = ? AND photoID IN (SELECT ID FROM photos WHERE userID = ?)", userIDToBan, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Delete likes of banned user on the logged in user's photos
+	_, err = db.c.Exec("DELETE FROM likes WHERE userID = ? AND photoID IN (SELECT ID FROM photos WHERE userID = ?)", userIDToBan, userID)
+	if err != nil {
+		return nil, err
+	}
+
 	// Get and return the updated banned list
 	rows, err := db.c.Query("SELECT ID, userID, bannedID FROM bans WHERE userID = ?", userID)
 
