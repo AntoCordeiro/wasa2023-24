@@ -2,11 +2,11 @@ package api
 
 import (
 	"encoding/json"
-	"github.com/julienschmidt/httprouter"
-	"net/http"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/types"
+	"github.com/julienschmidt/httprouter"
 	"io/ioutil"
+	"net/http"
 	"time"
 )
 

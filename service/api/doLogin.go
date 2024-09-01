@@ -2,10 +2,10 @@ package api
 
 import (
 	"encoding/json"
-	"github.com/julienschmidt/httprouter"
-	"net/http"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/types"
+	"github.com/julienschmidt/httprouter"
+	"net/http"
 )
 
 func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
@@ -25,5 +25,5 @@ func (rt *_router) doLogin(w http.ResponseWriter, r *http.Request, ps httprouter
 	}
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(user)
+	_ = json.NewEncoder(w).Encode(user.ID)
 }

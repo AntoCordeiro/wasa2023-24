@@ -14,7 +14,7 @@ func (db *appdbimpl) UserFirstLogin(username string) (types.User, error) {
 		}
 		return user, nil
 	}
-	
+
 	lastInsertID, err := result.LastInsertId()
 	if err != nil {
 		return types.User{}, err

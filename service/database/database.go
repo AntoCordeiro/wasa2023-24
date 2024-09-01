@@ -59,7 +59,7 @@ type AppDatabase interface {
 	GetBanList(userID int) ([]types.BanListComponent, error)
 	AddToBanList(userID int, userIDToBan int) error
 	RemoveFromBanList(userID int, bannedUsername string) error
-	
+
 	// likes operations
 	GetLikesList(userID int, photoID int) ([]types.Like, error)
 	AddLike(like types.Like) ([]types.Like, error)
@@ -126,7 +126,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 		if err != nil {
 			return nil, fmt.Errorf("error creating database structure: %w", err)
 		}
-	}	
+	}
 	// Create the bans table
 	err = db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='bansTable';`).Scan(&tableName)
 	if errors.Is(err, sql.ErrNoRows) {

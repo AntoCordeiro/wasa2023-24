@@ -5,7 +5,7 @@ info:
   title: WASAPhoto APIs
   description: |
     This OpenAPI document describes the apis for the WASAPhoto web application project.
-  version: 3.0.1
+  version: 3.0.2
 tags:
   - name: Login
     description: User login function
@@ -90,7 +90,7 @@ paths:
           content:
             application/json:
               schema: 
-                $ref: "#/components/schemas/User"
+                $ref: "#/components/schemas/UserProfile"
         '400':
           $ref: "#/components/responses/BadRequest"
         '401':
@@ -649,6 +649,28 @@ components:
           $ref: "#/components/schemas/Username"
         PostsCount:
           $ref: "#/components/schemas/Count"
+          
+    UserProfile:
+      description: "The list of banned users"
+      type: object
+      properties:
+        bans:
+          description: "the bans array"
+          type: array
+          items:
+            type: object
+            description: "made of the ban object id and the username of banned user"
+            properties:
+              UserData:
+                $ref: "#/components/schemas/User"
+              PhotosList:
+                $ref: "#/components/schemas/PhotosList"
+              FollowsList:
+                $ref: "#/components/schemas/Username"
+              FollowersList:
+                $ref: "#/components/schemas/Username"
+          minItems: 0
+          maxItems: 10000
           
     Stream:
       description: | 

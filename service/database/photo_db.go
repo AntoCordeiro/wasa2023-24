@@ -41,7 +41,7 @@ func (db *appdbimpl) RemovePhoto(userID int, photoID int) error {
 		return err
 	}
 
-	// Delete the comments under the deleted photo 
+	// Delete the comments under the deleted photo
 	_, err = db.c.Exec("DELETE FROM comments WHERE photoID = ?", photoID)
 	if err != nil {
 		return err
