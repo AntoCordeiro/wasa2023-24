@@ -3,10 +3,9 @@ servers:
 - url: "http://localhost:3000"
 info:
   title: WASAPhoto APIs
-  description: |-
-    This OpenAPI document describes the simplified login API.
-    Copy and paste the API from the `paths` key to your OpenAPI document.
-  version: 2.0.2
+  description: |
+    This OpenAPI document describes the apis for the WASAPhoto web application project.
+  version: 3.0.1
 tags:
   - name: Login
     description: User login function
@@ -69,10 +68,10 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
      
-  /users/{userID}/profiles/{username}:
+  /users/{myUsername}/profiles/{profileUsername}:
     parameters: 
-      - $ref: "#/components/parameters/userID"
-      - $ref: "#/components/parameters/username"
+      - $ref: "#/components/parameters/myUsername"
+      - $ref: "#/components/parameters/profileUsername"
     get:
       security: 
         - bearerAuth: []
@@ -101,9 +100,9 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
   
-  /users/{userID}/username:
+  /users/{myUsername}/username:
     parameters: 
-      - $ref: "#/components/parameters/userID"
+      - $ref: "#/components/parameters/myUsername"
     put: 
       security: 
         - bearerAuth: []
@@ -135,9 +134,9 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
         
-  /users/{userID}/stream:
+  /users/{myUsername}/stream:
     parameters: 
-      - $ref: "#/components/parameters/userID"
+      - $ref: "#/components/parameters/myUsername"
     get:
       security: 
         - bearerAuth: []
@@ -164,9 +163,9 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
 
-  /users/{userID}/bans:
+  /users/{myUsername}/bans:
     parameters: 
-      - $ref: "#/components/parameters/userID"
+      - $ref: "#/components/parameters/myUsername"
       
     get:
       security: 
@@ -192,7 +191,7 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
 
-    put:
+    post:
       security: 
         - bearerAuth: []
       tags: ["Ban"]
@@ -207,12 +206,8 @@ paths:
             schema: 
               $ref: "#/components/schemas/Username"
       responses:
-        "201":
+        "204":
           description: User banned successfully.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BanList"
         '400':
           $ref: "#/components/responses/BadRequest"
         '401':
@@ -222,10 +217,10 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
      
-  /users/{userID}/bans/{banID}:
+  /users/{myUsername}/bans/{bannedUsername}:
     parameters:
-      - $ref: "#/components/parameters/userID"
-      - $ref: "#/components/parameters/banID"
+      - $ref: "#/components/parameters/myUsername"
+      - $ref: "#/components/parameters/bannedUsername"
     delete:
       security: 
         - bearerAuth: []
@@ -236,12 +231,8 @@ paths:
         This function will remove a person from the ban list making it unbanned.
         The username of the person to unban must be specified in the path
       responses:
-        '200':
+        '204':
           description: user unbanned successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BanList"
         '400':
           $ref: "#/components/responses/BadRequest"
         '401':
@@ -251,10 +242,10 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
             
-  /users/{userID}/follows:
+  /users/{myUsername}/follows:
     parameters: 
-      - $ref: "#/components/parameters/userID"
-    put:
+      - $ref: "#/components/parameters/myUsername"
+    post:
       security: 
         - bearerAuth: []
       tags: ["Follow"]
@@ -269,12 +260,8 @@ paths:
             schema: 
               $ref: "#/components/schemas/Username"
       responses:
-        '201':
+        '204':
           description: User followed successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FollowsList"
         '400':
           $ref: "#/components/responses/BadRequest"
         '401':
@@ -284,10 +271,10 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
      
-  /users/{userID}/follows/{followID}:
+  /users/{myUsername}/follows/{followedUsername}:
     parameters: 
-      - $ref: "#/components/parameters/userID"
-      - $ref: "#/components/parameters/followID"
+      - $ref: "#/components/parameters/myUsername"
+      - $ref: "#/components/parameters/followedUsername"
     delete:
       security: 
         - bearerAuth: []
@@ -299,12 +286,8 @@ paths:
         followed users list. The username of the person to unfollow must be
         specified in the path.
       responses:
-        "200":
+        "204":
           description: User unfollowed successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/FollowsList"
         '400':
           $ref: "#/components/responses/BadRequest"
         '401':
@@ -314,9 +297,9 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
   
-  /users/{userID}/photos:
+  /users/{myUsername}/photos:
     parameters:
-      - $ref: "#/components/parameters/userID"
+      - $ref: "#/components/parameters/myUsername"
     post:
       security: 
         - bearerAuth: []
@@ -355,9 +338,9 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
     
-  /users/{userID}/photos/{photoID}:
+  /users/{myUsername}/photos/{photoID}:
     parameters: 
-      - $ref: "#/components/parameters/userID"
+      - $ref: "#/components/parameters/myUsername"
       - $ref: "#/components/parameters/photoID"
     delete:
       security: 
@@ -383,9 +366,9 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
           
-  /users/{userID}/photos/{photoID}/likes/:
+  /users/{myUsername}/photos/{photoID}/likes/:
     parameters:
-      - $ref: "#/components/parameters/userID"
+      - $ref: "#/components/parameters/myUsername"
       - $ref: "#/components/parameters/photoID"
       
     get:
@@ -414,7 +397,7 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
     
-    put:
+    post:
       security: 
         - bearerAuth: []
       tags: ["Like"]
@@ -439,9 +422,9 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
 
-  /users/{userID}/photos/{photoID}/likes/{likeID}:
+  /users/{myUsername}/photos/{photoID}/likes/{likeID}:
     parameters:
-      - $ref: "#/components/parameters/userID"
+      - $ref: "#/components/parameters/myUsername"
       - $ref: "#/components/parameters/photoID"
       - $ref: "#/components/parameters/likeID"
     delete:
@@ -468,9 +451,9 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
     
-  /users/{userID}/photos/{photoID}/comments/:
+  /users/{myUsername}/photos/{photoID}/comments/:
     parameters:
-      - $ref: "#/components/parameters/userID"
+      - $ref: "#/components/parameters/myUsername"
       - $ref: "#/components/parameters/photoID"
     post:
       security: 
@@ -527,9 +510,9 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
 
-  /users/{userID}/photos/{photoID}/comments/{commentID}:
+  /users/{myUsername}/photos/{photoID}/comments/{commentID}:
     parameters:
-      - $ref: "#/components/parameters/userID"
+      - $ref: "#/components/parameters/myUsername"
       - $ref: "#/components/parameters/photoID"
       - $ref: "#/components/parameters/commentID"
     delete:
@@ -658,15 +641,13 @@ components:
         The user profile made of the username, the followers and 
         following counts, the number of posts
       properties:
-        userID:
-          $ref: "#/components/schemas/ID"
-        username:
+        ID:
+          allOf: 
+            - $ref: "#/components/schemas/ID"
+          readOnly: true
+        Username:
           $ref: "#/components/schemas/Username"
-        followers:
-          $ref: "#/components/schemas/Count"
-        following:
-          $ref: "#/components/schemas/Count"
-        postCount:
+        PostsCount:
           $ref: "#/components/schemas/Count"
           
     Stream:
@@ -679,32 +660,6 @@ components:
       minItems: 0
       maxItems: 10000
 
-    Ban:
-      description: |
-        A ban object with its id, the username of who is banning 
-        and the username of the banned person
-      type: object
-      properties:
-        banID:
-          $ref: "#/components/schemas/ID"
-        banner:
-          $ref: "#/components/schemas/Username"
-        banned:
-          $ref: "#/components/schemas/Username"
-    
-    Follow:
-      description: |
-        A follow object with its id, the user username and the
-        followed username
-      type: object
-      properties:
-        followID:
-          $ref: "#/components/schemas/ID"
-        user:
-          $ref: "#/components/schemas/Username"
-        followed:
-          $ref: "#/components/schemas/Username"
-      
     ID:
       description: |
         The integer id schema used for different objects like users, photos, comments,
@@ -729,21 +684,21 @@ components:
       minItems: 0
       maxItems: 10000
 
-    FollowsList:
-      description: "The list of folowwed users"
-      type: array
-      items:
-        $ref: "#/components/schemas/Follow"
-      minItems: 0
-      maxItems: 10000
-    
     BanList:
       description: "The list of banned users"
-      type: array
-      items:
-        $ref: "#/components/schemas/Ban"
-      minItems: 0
-      maxItems: 10000
+      type: object
+      properties:
+        bans:
+          type: array
+          items:
+            type: object
+            properties:
+              ID:
+                $ref: "#/components/schemas/ID"
+              bannedUsername:
+                $ref: "#/components/schemas/Username"
+          minItems: 0
+          maxItems: 10000
       
     LikesList:
       description: "The list of likes on a photo"
@@ -762,21 +717,37 @@ components:
       maxItems: 10000
           
   parameters:
-    username:
+    myUsername:
       schema:
         $ref: "#/components/schemas/Username"
-      name: username
+      name: myUsername
       in: path
       required: true
-      description: username of a user
-    
-    userID:
+      description: "the username of the logged in user"
+  
+    profileUsername:
       schema:
         $ref: "#/components/schemas/Username"
-      name: userID
+      name: profileUsername
       in: path
       required: true
-      description: "userID is the username of the user that is logged in"
+      description: "the profile's username to get"
+      
+    followedUsername:
+      schema:
+        $ref: "#/components/schemas/Username"
+      name: followedUsername
+      in: path
+      required: true
+      description: "The username of a user to unfollow."
+
+    bannedUsername:
+      schema:
+        $ref: "#/components/schemas/Username"
+      name: bannedUsername
+      in: path
+      required: true
+      description: "banID: id of a user-bannedUsername object."
 
     photoID:
       schema:
@@ -801,19 +772,3 @@ components:
       in: path
       required: true
       description: "likeID: id of a like on a photo."
-
-    followID:
-      schema:
-        $ref: "#/components/schemas/ID"
-      name: followID
-      in: path
-      required: true
-      description: "followID: id of a user-following object."
-
-    banID:
-      schema:
-        $ref: "#/components/schemas/ID"
-      name: banID
-      in: path
-      required: true
-      description: "banID: id of a user-bannedUsername object."
