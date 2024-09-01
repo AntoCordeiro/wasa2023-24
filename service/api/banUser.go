@@ -35,13 +35,10 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 	}
 
 	// Add the user to the banned list and encode the returned banned list in the response
-	banList, err := rt.db.AddToBanList(userObj.ID, userToBan.ID)
+	err = rt.db.AddToBanList(userObj.ID, userToBan.ID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	w.Header().Set("content-type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(banList)
+	w.WriteHeader(http.StatusNoContent)
 }

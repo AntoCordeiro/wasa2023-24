@@ -38,6 +38,11 @@ type Ban struct {
 	BannedID int `json:"bannedID"`
 }
 
+type BanListComponent struct {
+	BanID			int		`json:"banID"`
+	Username		string	`json:"username"`
+}
+
 type Like struct {
 	ID      int       `json:"id"`
 	UserID  int       `json:"userID"`

@@ -20,12 +20,12 @@ func (rt *_router) Handler() http.Handler {
 
 	// follow
 	rt.router.PUT("/users/:myUsername/follows", rt.wrap(rt.followUser))
-	rt.router.DELETE("/users/:myUsername/follows/:followID", rt.wrap(rt.unfollowUser))
+	rt.router.DELETE("/users/:myUsername/follows/:followedUsername", rt.wrap(rt.unfollowUser))
 
 	// ban
 	rt.router.GET("/users/:myUsername/bans", rt.wrap(rt.getBans))
 	rt.router.PUT("/users/:myUsername/bans", rt.wrap(rt.banUser))
-	rt.router.DELETE("/users/:myUsername/bans/:banID", rt.wrap(rt.unbanUser))
+	rt.router.DELETE("/users/:myUsername/bans/:bannedUsername", rt.wrap(rt.unbanUser))
 
 	// like
 	rt.router.GET("/users/:myUsername/photos/:photoID/likes", rt.wrap(rt.getLikes))

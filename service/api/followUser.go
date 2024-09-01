@@ -35,13 +35,10 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	}
 
 	// Insert the follow in the database and encode the returned follows list in the response
-	followsList, err := rt.db.StartFollowing(userObj.ID, userToFollow.ID)
+	err = rt.db.StartFollowing(userObj.ID, userToFollow.ID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	w.Header().Set("content-type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(followsList)
+	w.WriteHeader(http.StatusNoContent)
 }

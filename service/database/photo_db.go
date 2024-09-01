@@ -7,6 +7,9 @@ import (
 func (db *appdbimpl) InsertPhoto(photoObj types.Photo) error {
 	// Insert the photo in the photos table
 	_, err := db.c.Exec("INSERT INTO photos(userID, photoData, uploadDate, likesCount, commentsCount) VALUES (?, ?, ?, ?, ?)", photoObj.UserID, photoObj.PhotoData, photoObj.UploadDate, photoObj.LikesCount, photoObj.CommentsCount) //fix beacause if error is unique constraint it should retrieve the user anyway
+	if err != nil {
+		return err
+	}
 
 	// Update the posts count of the users in the users table
 	out, err := db.c.Exec("UPDATE users SET postCount = postCount + 1 WHERE ID = ?", photoObj.UserID)

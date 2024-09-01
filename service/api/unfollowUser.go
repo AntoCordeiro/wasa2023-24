@@ -1,11 +1,9 @@
 package api
 
 import (
-	"encoding/json"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
-	"strconv"
 )
 
 func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
@@ -20,21 +18,12 @@ func (rt *_router) unfollowUser(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	// Get the follow id from the path
-	followIDparam, err := strconv.Atoi(ps.ByName("followID"))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	// Remove the follow from the database and encode the returned update list of follows in the response
-	followsList, err := rt.db.StopFollowing(userObj.ID, followIDparam)
+	err = rt.db.StopFollowing(userObj.ID, ps.ByName("followedUsername"))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set("content-type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(followsList)
+	w.WriteHeader(http.StatusNoContent)
 }

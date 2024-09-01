@@ -52,15 +52,14 @@ type AppDatabase interface {
 	RemovePhoto(userID int, photoID int) error
 
 	// follow operations
-	GetFollowsList(userID int) ([]types.Follow, error)
-	StartFollowing(userID int, userIDToFollow int) ([]types.Follow, error)
-	StopFollowing(userID int, followID int) ([]types.Follow, error)
+	StartFollowing(userID int, userIDToFollow int) error
+	StopFollowing(userID int, followedUsername string) error
 
 	// ban operations
-	GetBanList(userID int) ([]types.Ban, error)
-	AddToBanList(userID int, userIDToBan int) ([]types.Ban, error)
-	RemoveFromBanList(userID int, banID int) ([]types.Ban, error)
-
+	GetBanList(userID int) ([]types.BanListComponent, error)
+	AddToBanList(userID int, userIDToBan int) error
+	RemoveFromBanList(userID int, bannedUsername string) error
+	
 	// likes operations
 	GetLikesList(userID int, photoID int) ([]types.Like, error)
 	AddLike(like types.Like) ([]types.Like, error)
