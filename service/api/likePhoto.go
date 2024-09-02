@@ -36,7 +36,7 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 		Date:    time.Now(),
 	}
 
-	likesList, err := rt.db.AddLike(likeObj)
+	likeObj.ID, err = rt.db.AddLike(likeObj)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -44,5 +44,5 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(likesList)
+	_ = json.NewEncoder(w).Encode(likeObj)
 }

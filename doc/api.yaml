@@ -306,7 +306,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/PhotosList"
+                $ref: "#/components/schemas/Photo"
         '400':
           $ref: "#/components/responses/BadRequest"
         '401':
@@ -380,7 +380,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/LikesList"
+                $ref: "#/components/schemas/Like"
         '400':
           $ref: "#/components/responses/BadRequest"
         '401':
@@ -402,12 +402,8 @@ paths:
       description: | 
         Unlike a photo you previously liked by specifying the like id in the path
       responses:
-        '200':
+        '204':
           description: Photo unliked successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/LikesList"
         '400':
           $ref: "#/components/responses/BadRequest"
         '401':
@@ -439,7 +435,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/CommentsList"
+                $ref: "#/components/schemas/Comment"
         '400':
           $ref: "#/components/responses/BadRequest"
         '401':
@@ -485,12 +481,8 @@ paths:
         Delete a comment you previously posted under a photo. The comment id and
         the photo id are specified in the path.
       responses:
-        '200':
+        '204':
           description: comment delete successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CommentsList"
         '400':
           $ref: "#/components/responses/BadRequest"
         '401':

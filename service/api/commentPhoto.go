@@ -43,7 +43,7 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 	commentObj.Date = time.Now()
 	commentObj.PhotoID = photoID
 
-	commentsList, err := rt.db.AddComment(commentObj)
+	commentObj.ID, err = rt.db.AddComment(commentObj)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -51,5 +51,5 @@ func (rt *_router) commentPhoto(w http.ResponseWriter, r *http.Request, ps httpr
 
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(commentsList)
+	_ = json.NewEncoder(w).Encode(commentObj)
 }

@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
@@ -35,13 +34,11 @@ func (rt *_router) uncommentPhoto(w http.ResponseWriter, r *http.Request, ps htt
 	}
 
 	// Remove the comment from the photo and encode the returned updated comments list in the response
-	commentsList, err := rt.db.RemoveComment(userObj.ID, photoID, commentID)
+	err = rt.db.RemoveComment(userObj.ID, photoID, commentID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set("content-type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(commentsList)
+	w.WriteHeader(http.StatusNoContent)
 }

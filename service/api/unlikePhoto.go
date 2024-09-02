@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
@@ -35,13 +34,11 @@ func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	// Remove the like from the photo and encode the returned updated likes list in the response
-	likesList, err := rt.db.RemoveLike(likeID, userObj.ID, photoID)
+	err = rt.db.RemoveLike(likeID, userObj.ID, photoID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set("content-type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(likesList)
+	w.WriteHeader(http.StatusNoContent)
 }

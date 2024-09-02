@@ -62,13 +62,13 @@ type AppDatabase interface {
 
 	// likes operations
 	GetLikesList(userID int, photoID int) ([]types.Like, error)
-	AddLike(like types.Like) ([]types.Like, error)
-	RemoveLike(likeID int, userID int, photoID int) ([]types.Like, error)
+	AddLike(like types.Like) (int, error)
+	RemoveLike(likeID int, userID int, photoID int) error
 
 	// comments operations
 	GetCommentsList(photoID int) ([]types.Comment, error)
-	AddComment(comment types.Comment) ([]types.Comment, error)
-	RemoveComment(userID int, photoID int, commentID int) ([]types.Comment, error)
+	AddComment(comment types.Comment) (int, error)
+	RemoveComment(userID int, photoID int, commentID int) error
 
 	Ping() error
 }
