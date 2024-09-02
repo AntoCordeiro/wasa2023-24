@@ -16,14 +16,14 @@ func (rt *_router) deletePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 
 	userObj, err := rt.db.UserLogin(userID, ps.ByName("myUsername"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	// Get the id of the photo to delete from the path
 	photoIDparam, err := strconv.Atoi(ps.ByName("photoID"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 

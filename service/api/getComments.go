@@ -16,14 +16,14 @@ func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 	_, err = rt.db.UserLogin(userID, ps.ByName("myUsername"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	// Get photo ID from the path
 	photoID, err := strconv.Atoi(ps.ByName("photoID"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -35,6 +35,6 @@ func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	w.Header().Set("content-type", "application/json")
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(commentsList)
 }

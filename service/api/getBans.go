@@ -15,7 +15,7 @@ func (rt *_router) getBans(w http.ResponseWriter, r *http.Request, ps httprouter
 	}
 	userObj, err := rt.db.UserLogin(userID, ps.ByName("myUsername"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
@@ -27,6 +27,6 @@ func (rt *_router) getBans(w http.ResponseWriter, r *http.Request, ps httprouter
 	}
 
 	w.Header().Set("content-type", "application/json")
-	w.WriteHeader(http.StatusCreated)
+	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(banList)
 }

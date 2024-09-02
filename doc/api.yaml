@@ -5,7 +5,7 @@ info:
   title: WASAPhoto APIs
   description: |
     This OpenAPI document describes the apis for the WASAPhoto web application project.
-  version: 3.0.2
+  version: 3.0.3
 tags:
   - name: Login
     description: User login function
@@ -91,12 +91,8 @@ paths:
             application/json:
               schema: 
                 $ref: "#/components/schemas/UserProfile"
-        '400':
-          $ref: "#/components/responses/BadRequest"
         '401':
           $ref: "#/components/responses/UnauthorizedError"
-        '404':
-          $ref: "#/components/responses/NotFoundError"
         '500':
           $ref: "#/components/responses/InternalServerError"
   
@@ -129,8 +125,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         '401':
           $ref: "#/components/responses/UnauthorizedError"
-        '404':
-          $ref: "#/components/responses/NotFoundError"
         '500':
           $ref: "#/components/responses/InternalServerError"
         
@@ -154,12 +148,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Stream"
-        '400':
-          $ref: "#/components/responses/BadRequest"
         '401':
           $ref: "#/components/responses/UnauthorizedError"
-        '404':
-          $ref: "#/components/responses/NotFoundError"
         '500':
           $ref: "#/components/responses/InternalServerError"
 
@@ -182,12 +172,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BanList"
-        '400':
-          $ref: "#/components/responses/BadRequest"
         '401':
           $ref: "#/components/responses/UnauthorizedError"
-        '404':
-          $ref: "#/components/responses/NotFoundError"
         '500':
           $ref: "#/components/responses/InternalServerError"
 
@@ -233,12 +219,8 @@ paths:
       responses:
         '204':
           description: user unbanned successfully
-        '400':
-          $ref: "#/components/responses/BadRequest"
         '401':
           $ref: "#/components/responses/UnauthorizedError"
-        '404':
-          $ref: "#/components/responses/NotFoundError"
         '500':
           $ref: "#/components/responses/InternalServerError"
             
@@ -288,12 +270,8 @@ paths:
       responses:
         "204":
           description: User unfollowed successfully
-        '400':
-          $ref: "#/components/responses/BadRequest"
         '401':
           $ref: "#/components/responses/UnauthorizedError"
-        '404':
-          $ref: "#/components/responses/NotFoundError"
         '500':
           $ref: "#/components/responses/InternalServerError"
   
@@ -333,8 +311,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         '401':
           $ref: "#/components/responses/UnauthorizedError"
-        '404':
-          $ref: "#/components/responses/NotFoundError"
         '500':
           $ref: "#/components/responses/InternalServerError"
     
@@ -351,18 +327,12 @@ paths:
       description: |
         Delete a photo by specifying the id of the photo to delete in the path
       responses:
-        '200':
+        '204':
           description: Photo deleted successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PhotosList"
         '400':
           $ref: "#/components/responses/BadRequest"
         '401':
           $ref: "#/components/responses/UnauthorizedError"
-        '404':
-          $ref: "#/components/responses/NotFoundError"
         '500':
           $ref: "#/components/responses/InternalServerError"
           
@@ -392,8 +362,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         '401':
           $ref: "#/components/responses/UnauthorizedError"
-        '404':
-          $ref: "#/components/responses/NotFoundError"
         '500':
           $ref: "#/components/responses/InternalServerError"
     
@@ -417,8 +385,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         '401':
           $ref: "#/components/responses/UnauthorizedError"
-        '404':
-          $ref: "#/components/responses/NotFoundError"
         '500':
           $ref: "#/components/responses/InternalServerError"
 
@@ -436,7 +402,7 @@ paths:
       description: | 
         Unlike a photo you previously liked by specifying the like id in the path
       responses:
-        '201':
+        '200':
           description: Photo unliked successfully
           content:
             application/json:
@@ -446,8 +412,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         '401':
           $ref: "#/components/responses/UnauthorizedError"
-        '404':
-          $ref: "#/components/responses/NotFoundError"
         '500':
           $ref: "#/components/responses/InternalServerError"
     
@@ -480,8 +444,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         '401':
           $ref: "#/components/responses/UnauthorizedError"
-        '404':
-          $ref: "#/components/responses/NotFoundError"
         '500':
           $ref: "#/components/responses/InternalServerError"
       
@@ -505,8 +467,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         '401':
           $ref: "#/components/responses/UnauthorizedError"
-        '404':
-          $ref: "#/components/responses/NotFoundError"
         '500':
           $ref: "#/components/responses/InternalServerError"
 
@@ -535,8 +495,6 @@ paths:
           $ref: "#/components/responses/BadRequest"
         '401':
           $ref: "#/components/responses/UnauthorizedError"
-        '404':
-          $ref: "#/components/responses/NotFoundError"
         '500':
           $ref: "#/components/responses/InternalServerError"
 

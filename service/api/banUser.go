@@ -17,7 +17,7 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 
 	userObj, err := rt.db.UserLogin(userID, ps.ByName("myUsername"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
@@ -25,12 +25,12 @@ func (rt *_router) banUser(w http.ResponseWriter, r *http.Request, ps httprouter
 	var userToBan types.User
 	err = json.NewDecoder(r.Body).Decode(&userToBan)
 	if err != nil || userToBan.Username == userObj.Username {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	userToBan.ID, err = rt.db.GetID(userToBan.Username)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 

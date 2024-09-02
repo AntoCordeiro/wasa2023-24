@@ -16,7 +16,7 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	}
 	userObj, err := rt.db.UserLogin(userID, ps.ByName("myUsername"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
@@ -24,13 +24,13 @@ func (rt *_router) followUser(w http.ResponseWriter, r *http.Request, ps httprou
 	var userToFollow types.User
 	err = json.NewDecoder(r.Body).Decode(&userToFollow)
 	if err != nil || userToFollow.Username == userObj.Username {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	// Get the ID of the user to follow from the database
 	userToFollow.ID, err = rt.db.GetID(userToFollow.Username)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
 
