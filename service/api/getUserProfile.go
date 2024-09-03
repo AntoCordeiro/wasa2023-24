@@ -22,9 +22,9 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	// Get the profile of the user specified in the path and encode it in the response
 	userProfile, err := rt.db.GetProfile(ps.ByName("profileUsername"))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "getprofile"+err.Error(), http.StatusInternalServerError)
 		return
-	} //Have to add the check if the user is banned
+	}
 	w.Header().Set("content-type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(userProfile)

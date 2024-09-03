@@ -4,7 +4,6 @@ import (
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/types"
 )
 
-// GetName is an example that shows you how to query data
 func (db *appdbimpl) AddToBanList(userID int, userIDToBan int) error {
 	// Try inserting the username into the database
 	_, err := db.c.Exec("INSERT INTO bans(userID, bannedID) VALUES (?, ?)", userID, userIDToBan)

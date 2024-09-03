@@ -20,10 +20,10 @@ type Photo struct {
 }
 
 type UserProfile struct {
-	UserData  User
-	Photos    []Photo
-	Follows   []User
-	Followers []User
+	UserData  User     `json:"user"`
+	Photos    []Photo  `json:"photos"`
+	Follows   []string `json:"follows"`
+	Followers []string `json:"followers"`
 }
 
 type Follow struct {
@@ -39,8 +39,8 @@ type Ban struct {
 }
 
 type BanListComponent struct {
-	BanID			int		`json:"banID"`
-	Username		string	`json:"username"`
+	BanID    int    `json:"banID"`
+	Username string `json:"username"`
 }
 
 type Like struct {

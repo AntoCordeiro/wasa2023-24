@@ -58,16 +58,16 @@ func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, erro
 	}
 
 	// Get the list of users that are followed by the logged in user
-	followsRows, err := db.c.Query("SELECT followsUserID FROM follows WHERE userID = ?", user.ID)
+	followsRows, err := db.c.Query("SELECT username FROM users WHERE ID IN (SELECT followsUserID FROM follows WHERE userID = ?)", user.ID)
 	if err != nil {
 		return types.UserProfile{}, err
 	}
 	defer followsRows.Close()
 
-	var followsList []types.User
+	var followsList []string
 	for followsRows.Next() {
-		var follow types.User
-		if err := followsRows.Scan(&follow.ID); err != nil {
+		var follow string
+		if err := followsRows.Scan(&follow); err != nil {
 			return types.UserProfile{}, err
 		}
 		followsList = append(followsList, follow)
@@ -76,35 +76,23 @@ func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, erro
 		return types.UserProfile{}, err
 	}
 
-	for i := 0; i < len(followsList); i++ {
-		if err := db.c.QueryRow("SELECT username FROM users WHERE ID = ?", followsList[i].ID).Scan(&followsList[i].Username); err != nil {
-			return types.UserProfile{}, err
-		}
-	}
-
 	// Get the list of users who follow the logged in user
-	followedRows, err := db.c.Query("SELECT userID FROM follows WHERE followsUserID = ?", user.ID)
+	followedRows, err := db.c.Query("SELECT username FROM users WHERE ID IN (SELECT userID FROM follows WHERE followsUserID = ?)", user.ID)
 	if err != nil {
 		return types.UserProfile{}, err
 	}
 	defer followedRows.Close()
 
-	var followedList []types.User
+	var followedList []string
 	for followedRows.Next() {
-		var followed types.User
-		if err := followedRows.Scan(&followed.ID); err != nil {
+		var followed string
+		if err := followedRows.Scan(&followed); err != nil {
 			return types.UserProfile{}, err
 		}
 		followedList = append(followedList, followed)
 	}
 	if err = followedRows.Err(); err != nil {
 		return types.UserProfile{}, err
-	}
-
-	for i := 0; i < len(followedList); i++ {
-		if err := db.c.QueryRow("SELECT username FROM users WHERE ID = ?", followedList[i].ID).Scan(&followedList[i].Username); err != nil {
-			return types.UserProfile{}, err
-		}
 	}
 
 	// Get photos uploaded by the user
