@@ -344,7 +344,7 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
           
-  /users/{myUsername}/photos/{photoID}/likes/:
+  /users/{myUsername}/photos/{photoID}/likes:
     parameters:
       - $ref: "#/components/parameters/myUsername"
       - $ref: "#/components/parameters/photoID"
@@ -419,7 +419,7 @@ paths:
         '500':
           $ref: "#/components/responses/InternalServerError"
     
-  /users/{myUsername}/photos/{photoID}/comments/:
+  /users/{myUsername}/photos/{photoID}/comments:
     parameters:
       - $ref: "#/components/parameters/myUsername"
       - $ref: "#/components/parameters/photoID"
