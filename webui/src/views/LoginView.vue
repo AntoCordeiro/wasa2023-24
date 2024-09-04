@@ -14,7 +14,7 @@ export default {
 				this.userID = response.data;
 				localStorage.setItem("userID", this.userID)
 				localStorage.setItem("username", this.username)
-				this.$router.push({ path: "/profile"})
+				this.$router.push({ path: "/myStream"})
 			} catch (e) {
 				if (e.response && e.response.status === 400) {
 					this.errormsg = "Status Bad Request: try again"

@@ -33,7 +33,7 @@ export default {
 				if (this.userProfile.photos) {
 					for (let i = 0; i < this.userProfile.photos.length; i++) {
       					const photo = this.userProfile.photos[i];
-     					photo.photoData = `data:image/octet-stream;base64,${photo.photoData}`; // Adjust MIME type if needed
+     					photo.photoData = `data:image/octet-stream;base64,${photo.photoData}`; 
     				}
 				}
 				console.log("changed phtos:", this.userProfile);
@@ -168,6 +168,24 @@ export default {
 				}
 			}
     	},
+		async deleteComment(commentID, photoID) {
+				try {
+					let response = await this.$axios.delete("/users/" + this.username + "/photos/" + photoID + "/comments/" + commentID, {
+					headers: {Authorization: "Bearer " + this.userID }
+					});
+					this.getComments(photoID)
+				} catch(e) {
+					if (e.response && e.response.status === 401) {
+						this.errormsg = "Status Unauthorized"
+					} else if (e.response && e.response.status === 400) {
+						this.errormsg = "Status Bad Request"
+					} else if (e.response && e.response.status === 500) {
+						this.errormsg = "Status Internal Server Error"
+					} else {
+						this.errormsg = e.toString();
+					}
+				}
+			},
 		async searchUserProfile(searchQuery) {
 			this.searchedUsername = searchQuery;
 			if (this.username === this.searchedUsername) {
@@ -177,7 +195,8 @@ export default {
 			this.refresh()
 		},
 	mounted() {
-		if (this.username === this.searchedUsername) {
+		this.searchUserProfile = this.$route.query.searchQuery || ''
+		if (this.searchUserProfile === this.username) {
 			this.isMyProfile = true
 		}
 		this.refresh()
@@ -249,6 +268,7 @@ export default {
 					  	<ul>
 							<li v-for="comment in comments" :key="comment.id">
 							{{ comment.userID }}: {{ comment.content }}
+							<a href="javascript:" @click="deleteComment(comment.id)">[Delete]</a>
 							</li>
 					  	</ul>
 					  	<form @submit.prevent="postComment(photo.id, newComment)">
