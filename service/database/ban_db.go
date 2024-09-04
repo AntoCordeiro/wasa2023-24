@@ -50,7 +50,7 @@ func (db *appdbimpl) RemoveFromBanList(userID int, bannedUsername string) error 
 
 func (db *appdbimpl) GetBanList(userID int) ([]types.BanListComponent, error) {
 	// Get and return the updated banned list
-	rows, err := db.c.Query("SELECT bans.ID, username FROM bans JOIN users ON users.ID = bans.userID WHERE bans.userID = ?", userID)
+	rows, err := db.c.Query("SELECT bans.ID, username FROM bans JOIN users ON users.ID = bans.bannedID WHERE bans.userID = ?", userID)
 	if err != nil {
 		return nil, err
 	}

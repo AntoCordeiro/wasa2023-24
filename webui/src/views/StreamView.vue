@@ -10,6 +10,7 @@
 				showComments: false,
 				currentPhotoId: null,
 				newComment: "",
+				banList: [],
 			}
 		},
 		methods: {
@@ -19,14 +20,17 @@
 					headers: {Authorization: "Bearer " + this.userID }
 					});
 					this.stream = response.data
-					console.log(response.data)
 					if (this.stream) {
-					for (let i = 0; i < this.stream.length; i++) {
-      					const photo = this.stream[i];
-     					photo.photoData = `data:image/octet-stream;base64,${photo.photoData}`; 
-    				}
-					console.log("changed phtos:", this.stream);
-				}
+						for (let i = 0; i < this.stream.length; i++) {
+      						const photo = this.stream[i];
+     						photo.photoData = `data:image/octet-stream;base64,${photo.photoData}`; 
+    					}	
+					}
+					let banResponse = await this.$axios.get("/users/" + this.username + "/bans", {
+					headers: {Authorization: "Bearer " + this.userID }
+					});
+					this.banList = banResponse.data
+					console.log(banResponse.data)
 				} catch (e) {
 					if (e.response && e.response.status === 401) {
 					this.errormsg = "Status Unauthorized"
@@ -96,6 +100,28 @@
 					}
 				}
 			},
+			async goToSearch() {
+				this.$router.push({ path: "/profile"})
+			},
+			async unbanUser(username) {
+				try {
+				let response = await this.$axios.delete("/users/" + this.username + "/bans/" + username, {
+					headers: {Authorization: "Bearer " + this.userID }
+				});
+				this.refresh()
+				}
+				catch(e) {
+					if (e.response && e.response.status === 401) {
+					this.errormsg = "Status Unauthorized"
+				} else if (e.response && e.response.status === 400) {
+					this.errormsg = "Status Bad Request"
+				} else if (e.response && e.response.status === 500) {
+					this.errormsg = "Status Internal Server Error"
+				} else {
+					this.errormsg = e.toString();
+				}
+				}
+			}
 		},
 		mounted() {
 			this.refresh()
@@ -108,6 +134,7 @@
 			<div
 				class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 				<h1 class="h2">Home page</h1>
+				<button type="submit" class="btn btn-sm btn-primary" @click="goToSearch()">Search profile</button>
 				<div class="btn-toolbar mb-2 mb-md-0">
 					<div class="btn-group me-2">
 						<button type="button" class="btn btn-sm btn-outline-secondary" @click="refresh">
@@ -155,7 +182,14 @@
 					</div>
 				</div>
 			</div>
-	
+			<ul>
+				<p>List of banned users</p>
+				<li v-for="ban in banList" :key="ban.banID">
+				{{ ban.banID }}: {{ ban.username }}
+				<a href="javascript:" @click="unbanUser(ban.username)">[Delete]</a>
+				</li>
+			</ul>
+			
 			<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 		</div>
 	</template>

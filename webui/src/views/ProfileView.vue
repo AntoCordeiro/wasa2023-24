@@ -25,6 +25,11 @@ export default {
 	methods: {
 		async refresh() {
 			try {
+				if (this.searchedUsername === this.username) {
+					this.isMyProfile = true
+				} else {
+					this.isMyProfile = false
+				}
 				let response = await this.$axios.get("/users/" + this.username + "/profiles/" + this.searchedUsername, {
 					headers: {Authorization: "Bearer " + this.userID }
 				});
@@ -188,17 +193,27 @@ export default {
 			},
 		async searchUserProfile(searchQuery) {
 			this.searchedUsername = searchQuery;
-			if (this.username === this.searchedUsername) {
-				this.isMyProfile = true
-			}
 			this.searchQuery = "";
 			this.refresh()
 		},
+		async banUser() {
+			try {
+				let response = await this.$axios.post("/users/" + this.username + "/bans", { username: this.searchedUsername }, {
+				headers: {Authorization: "Bearer " + this.userID, "Content-Type": "application/json"}
+				});
+				this.$router.push({ path: "/myStream"})
+			} catch(e) {
+				if (e.response && e.response.status === 401) {
+					this.errormsg = "Status Unauthorized"
+				} else if (e.response && e.response.status === 400) {
+					this.errormsg = "Status Bad Request"
+				} else if (e.response && e.response.status === 500) {
+					this.errormsg = "Status Internal Server Error"
+				} else {
+					this.errormsg = e.toString();					}
+			}
+		},
 	mounted() {
-		this.searchUserProfile = this.$route.query.searchQuery || ''
-		if (this.searchUserProfile === this.username) {
-			this.isMyProfile = true
-		}
 		this.refresh()
 	},
 }}
@@ -227,7 +242,7 @@ export default {
 					</button>
 				</div>
 				<div class="btn-group me-2">
-					<button v-if="!isMyProfile" type="button" class="btn btn-sm btn-outline-primary" @click="banUser">
+					<button v-if="!isMyProfile" type="button" class="btn btn-sm btn-outline-primary" @click="banUser()">
 						Ban
 					</button>
 				</div>
