@@ -146,10 +146,10 @@ func (db *appdbimpl) GetStream(userID int) ([]types.Photo, error) {
 			return nil, err
 		}
 		var exists bool
-        err = db.c.QueryRow("SELECT EXISTS (SELECT 1 FROM likes WHERE userID = ? AND photoID = ?)", userID, photo.ID).Scan(&exists)
-        if err != nil {
-            return nil, err 
-        }
+		err = db.c.QueryRow("SELECT EXISTS (SELECT 1 FROM likes WHERE userID = ? AND photoID = ?)", userID, photo.ID).Scan(&exists)
+		if err != nil {
+			return nil, err
+		}
 		if exists {
 			photo.IsLiked = true
 		} else {

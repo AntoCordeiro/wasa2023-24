@@ -55,17 +55,17 @@ func (db *appdbimpl) RemoveLike(likeID int, userID int, photoID int) error {
 	return nil
 }
 
-func (db *appdbimpl) GetLikesList(userID int, photoID int) ([]types.Like, error) {
+func (db *appdbimpl) GetLikesList(userID int, photoID int) ([]types.LikeListComponent, error) {
 	// Get and return the updated likes list
-	rows, err := db.c.Query("SELECT ID, userID, photoID, date FROM likes WHERE userID = ? AND photoID = ? ORDER BY date DESC", userID, photoID)
+	rows, err := db.c.Query("SELECT likes.ID, username FROM likes JOIN users ON users.ID = likes.userID WHERE likes.photoID = ? ORDER BY date DESC", photoID)
 	if err != nil {
 		return nil, err
 	}
 
-	var likesList []types.Like
+	var likesList []types.LikeListComponent
 	for rows.Next() {
-		var likeObj types.Like
-		if err := rows.Scan(&likeObj.ID, &likeObj.UserID, &likeObj.PhotoID, &likeObj.Date); err != nil {
+		var likeObj types.LikeListComponent
+		if err := rows.Scan(&likeObj.LikeID, &likeObj.Username); err != nil {
 			return nil, err
 		}
 		likesList = append(likesList, likeObj)

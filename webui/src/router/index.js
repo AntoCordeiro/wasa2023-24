@@ -9,9 +9,6 @@ const router = createRouter({
 		{path: '/', component: LoginView},
 		{path: '/myStream', component: StreamView},
 		{path: '/profile', component: ProfileView},
-		{path: '/link1', component: LoginView},
-		{path: '/link2', component: LoginView},
-		{path: '/some/variable_here/path', component: LoginView},
 	]
 })
 

@@ -17,7 +17,7 @@ type Photo struct {
 	UploadDate    time.Time `json:"uploadDate"`
 	LikesCount    int       `json:"likesCount"`
 	CommentsCount int       `json:"commentsCount"`
-	IsLiked		  bool		`json:"isLiked"`
+	IsLiked       bool      `json:"isLiked"`
 }
 
 type UserProfile struct {
@@ -51,10 +51,20 @@ type Like struct {
 	Date    time.Time `json:"date"`
 }
 
+type LikeListComponent struct {
+	LikeID   int    `json:"likeID"`
+	Username string `json:"username"`
+}
+
 type Comment struct {
 	ID      int       `json:"id"`
 	UserID  int       `json:"userID"`
 	PhotoID int       `json:"photoID"`
 	Content string    `json:"content"`
 	Date    time.Time `json:"date"`
+}
+
+type CommentListComponent struct {
+	CommentData Comment `json:"commentData"`
+	Username    string  `json:"username"`
 }

@@ -54,16 +54,16 @@ func (db *appdbimpl) RemoveComment(userID int, photoID int, commentID int) error
 	return nil
 }
 
-func (db *appdbimpl) GetCommentsList(photoID int) ([]types.Comment, error) {
-	rows, err := db.c.Query("SELECT ID, userID, photoID, content, date FROM comments WHERE photoID = ? ORDER BY date DESC", photoID)
+func (db *appdbimpl) GetCommentsList(photoID int) ([]types.CommentListComponent, error) {
+	rows, err := db.c.Query("SELECT comments.ID, userID, photoID, content, date, username FROM comments JOIN users ON users.ID = comments.userID WHERE comments.photoID = ? ORDER BY date DESC", photoID)
 	if err != nil {
 		return nil, err
 	}
 
-	var commentsList []types.Comment
+	var commentsList []types.CommentListComponent
 	for rows.Next() {
-		var commentObj types.Comment
-		if err := rows.Scan(&commentObj.ID, &commentObj.UserID, &commentObj.PhotoID, &commentObj.Content, &commentObj.Date); err != nil {
+		var commentObj types.CommentListComponent
+		if err := rows.Scan(&commentObj.CommentData.ID, &commentObj.CommentData.UserID, &commentObj.CommentData.PhotoID, &commentObj.CommentData.Content, &commentObj.CommentData.Date, &commentObj.Username); err != nil {
 			return nil, err
 		}
 		commentsList = append(commentsList, commentObj)
