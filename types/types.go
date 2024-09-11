@@ -17,6 +17,7 @@ type Photo struct {
 	UploadDate    time.Time `json:"uploadDate"`
 	LikesCount    int       `json:"likesCount"`
 	CommentsCount int       `json:"commentsCount"`
+	IsLiked		  bool		`json:"isLiked"`
 }
 
 type UserProfile struct {

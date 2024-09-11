@@ -99,7 +99,6 @@ export default {
 				let response = await this.$axios.post("/users/" + this.username + "/follows", { username }, {
 					headers: {Authorization: "Bearer " + this.userID, "Content-Type": "application/json" }
 				});
-				this.comments
 				this.refresh()
 			}
 			catch(e) {
@@ -283,7 +282,7 @@ export default {
 					  	<ul>
 							<li v-for="comment in comments" :key="comment.id">
 							{{ comment.userID }}: {{ comment.content }}
-							<a href="javascript:" @click="deleteComment(comment.id)">[Delete]</a>
+							<a href="javascript:" @click="deleteComment(comment.id, photo.id)">[Delete]</a>
 							</li>
 					  	</ul>
 					  	<form @submit.prevent="postComment(photo.id, newComment)">

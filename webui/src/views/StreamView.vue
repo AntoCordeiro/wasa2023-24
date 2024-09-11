@@ -121,7 +121,7 @@
 					this.errormsg = e.toString();
 				}
 				}
-			}
+			},
 		},
 		mounted() {
 			this.refresh()
@@ -135,29 +135,14 @@
 				class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 				<h1 class="h2">Home page</h1>
 				<button type="submit" class="btn btn-sm btn-primary" @click="goToSearch()">Search profile</button>
-				<div class="btn-toolbar mb-2 mb-md-0">
-					<div class="btn-group me-2">
-						<button type="button" class="btn btn-sm btn-outline-secondary" @click="refresh">
-							Refresh
-						</button>
-						<button type="button" class="btn btn-sm btn-outline-secondary" @click="exportList">
-							Export
-						</button>
-					</div>
-					<div class="btn-group me-2">
-						<button type="button" class="btn btn-sm btn-outline-primary" @click="newItem">
-							New
-						</button>
-					</div>
-				</div>
 			</div>
 			<div class="col-md-4" v-for="photo in stream" :key="photo.id">
 				<div class="card mb-4 shadow-sm">
 					<img class="card-img-top" :src=photo.photoData alt="Card image cap">
 					<div class="card-body">
 						<p class="card-text">Uploaded on: {{ photo.uploadDate }}</p>
-						<button type="button" class="btn btn-sm btn-outline-primary">Like</button>
-						<button type="button" class="btn btn-sm btn-outline-primary">Unlike</button>
+						<button v-if="!photo.isLiked" type="button" class="btn btn-sm btn-outline-primary">Like</button>
+						<button v-if="photo.isLiked" type="button" class="btn btn-sm btn-outline-primary">Unlike</button>
 						<button type="button" class="btn btn-sm btn-outline-primary" @click=getComments(photo.id)>Comments</button>
 						<span>Likes: {{ photo.likesCount }}</span><br>
 						<span>Comments: {{ photo.commentsCount }}</span><br>
