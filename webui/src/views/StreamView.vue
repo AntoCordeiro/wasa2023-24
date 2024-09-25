@@ -122,6 +122,31 @@
 				}
 				}
 			},
+			async uploadPhoto(event) {
+				let file = event.target.files[0];
+				if (file) {
+					let formData = new FormData();
+					formData.append('file', file);
+
+					try {
+						let response = await this.$axios.post("/users/" + this.username + "/photos", formData, {
+						headers: {Authorization: "Bearer " + this.userID, 
+								  'Content-Type': 'multipart/form-data'}
+						});
+						this.refresh()
+					} catch(e) {
+						if (e.response && e.response.status === 401) {
+							this.errormsg = "Status Unauthorized"
+						} else if (e.response && e.response.status === 400) {
+							this.errormsg = "Status Bad Request"
+						} else if (e.response && e.response.status === 500) {
+							this.errormsg = "Status Internal Server Error"
+						} else {
+							this.errormsg = e.toString();
+						}
+					}
+				}
+			},
 		},
 		mounted() {
 			this.refresh()
@@ -134,6 +159,7 @@
 			<div
 				class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 				<h1 class="h2">Home page</h1>
+				<input type="file" @change="uploadPhoto">
 				<button type="submit" class="btn btn-sm btn-primary" @click="goToSearch()">Search profile</button>
 			</div>
 			<div class="col-md-4" v-for="photo in stream" :key="photo.id">

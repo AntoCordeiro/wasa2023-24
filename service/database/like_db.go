@@ -6,7 +6,7 @@ import (
 
 func (db *appdbimpl) AddLike(like types.Like) (int, error) {
 	// Insert the like in the likes table
-	result, err := db.c.Exec("INSERT INTO likes(userID, photoID, date) VALUES (?, ?, ?)", like.UserID, like.PhotoID, like.Date)
+	result, err := db.c.Exec("INSERT INTO likes(userID, photoID, date) VALUES (?, ?, ?) ON CONFLICT (userID, photoID) DO NOTHING", like.UserID, like.PhotoID, like.Date)
 	if err != nil {
 		return 0, err
 	}

@@ -108,6 +108,16 @@ func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, erro
 		if err := rows.Scan(&photo.ID, &photo.UserID, &photo.PhotoData, &photo.UploadDate, &photo.LikesCount, &photo.CommentsCount); err != nil {
 			return types.UserProfile{}, err
 		}
+		var exists bool
+		err = db.c.QueryRow("SELECT EXISTS (SELECT 1 FROM likes WHERE userID = ? AND photoID = ?)", user.ID, photo.ID).Scan(&exists)
+		if err != nil {
+			return types.UserProfile{}, err
+		}
+		if exists {
+			photo.IsLiked = true
+		} else {
+			photo.IsLiked = false
+		}
 		photosList = append(photosList, photo)
 	}
 	if err = rows.Err(); err != nil {

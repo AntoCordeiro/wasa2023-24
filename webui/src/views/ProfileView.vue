@@ -212,6 +212,24 @@ export default {
 					this.errormsg = e.toString();					}
 			}
 		},
+		async LikePhoto(photoID) {
+			try {
+				const authorizationHeader = `Bearer ${this.userID}`; // Assuming your backend expects "Bearer " format
+
+    			const response = await this.$axios.post(`/users/${this.username}/photos/${photoID}/likes`, {}, {headers: { Authorization: authorizationHeader },});
+
+			    this.refresh();
+			} catch(e) {
+					if (e.response && e.response.status === 401) {
+					this.errormsg = "Status Unauthorized"
+				} else if (e.response && e.response.status === 400) {
+					this.errormsg = "Status Bad Request"
+				} else if (e.response && e.response.status === 500) {
+					this.errormsg = "Status Internal Server Error"
+				} else {
+					this.errormsg = e.toString();
+				}}
+		},
 	mounted() {
 		this.refresh()
 	},
@@ -266,8 +284,8 @@ export default {
                 <img class="card-img-top" :src=photo.photoData alt="Card image cap">
 				<div class="card-body">
 					<p class="card-text">Uploaded on: {{ photo.uploadDate }}</p>
-					<button type="button" class="btn btn-sm btn-outline-primary">Like</button>
-      				<button type="button" class="btn btn-sm btn-outline-primary">Unlike</button>
+					<button v-if="!photo.isLiked" type="button" class="btn btn-sm btn-outline-primary" @click=LikePhoto(photo.id)>Like</button>
+      				<button v-if="photo.isLiked" type="button" class="btn btn-sm btn-outline-primary">Unlike</button>
       				<button type="button" class="btn btn-sm btn-outline-primary" @click=getComments(photo.id)>Comments</button><br>
 					<span>Likes: {{ photo.likesCount }}</span><br>
 					<span>Comments: {{ photo.commentsCount }}</span><br>
