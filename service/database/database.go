@@ -114,7 +114,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 		}
 	}
 	// Create the follows table
-	err = db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='followsTable';`).Scan(&tableName)
+	err = db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='follows';`).Scan(&tableName)
 	if errors.Is(err, sql.ErrNoRows) {
 		followsTable := `CREATE TABLE follows (
 						ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -128,7 +128,7 @@ func New(db *sql.DB) (AppDatabase, error) {
 		}
 	}
 	// Create the bans table
-	err = db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='bansTable';`).Scan(&tableName)
+	err = db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='bans';`).Scan(&tableName)
 	if errors.Is(err, sql.ErrNoRows) {
 		bansTable := `CREATE TABLE bans (
 						ID INTEGER PRIMARY KEY AUTOINCREMENT,
