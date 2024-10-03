@@ -138,6 +138,7 @@ export default {
 					headers: {Authorization: "Bearer " + this.userID }
 				});
 				this.comments = response.data
+				console.log("Comments data:", this.comments);
 				this.refresh()
 			} catch(e) {
 					if (e.response && e.response.status === 401) {
@@ -298,15 +299,19 @@ export default {
 					</div>
 					<div class="card-body">
 					  	<ul>
-							<li v-for="comment in comments" :key="comment.id">
-							{{ comment.userID }}: {{ comment.content }}
-							<a href="javascript:" @click="deleteComment(comment.id, photo.id)">[Delete]</a>
+							<li v-for="comment in comments" :key="comment.commentData.id">
+							{{ comment.commentData.userID }}: {{ comment.commentData.content }}
+							<a href="javascript:" @click="deleteComment(comment.commentData.id, photo.id)">[Delete]</a>
 							</li>
 					  	</ul>
 					  	<form @submit.prevent="postComment(photo.id, newComment)">
-						<input type="text" v-model="newComment" placeholder="Add a comment">
-						<button type="submit" class="btn btn-sm btn-primary">Add Comment</button>
-					  	</form>
+							<input
+							  type="text"
+							  v-model="newComment"
+							  placeholder="Add a comment"
+							/>
+							<button type="submit" class="btn btn-sm btn-primary">Add Comment</button>
+						  </form>						  
 					</div>
 				</div>
 			</div>
