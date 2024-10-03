@@ -84,9 +84,12 @@
     		},
 			async deleteComment(commentID, photoID) {
 				try {
+					console.log(photoID)
+
 					let response = await this.$axios.delete("/users/" + this.username + "/photos/" + photoID + "/comments/" + commentID, {
 					headers: {Authorization: "Bearer " + this.userID }
 					});
+					
 					this.getComments(photoID)
 				} catch(e) {
 					if (e.response && e.response.status === 401) {
@@ -180,9 +183,9 @@
 						</div>
 						<div class="card-body">
 							<ul>
-								<li v-for="comment in comments" :key="comment.id">
-								{{ comment.userID }}: {{ comment.content }}
-								<a href="javascript:" @click="deleteComment(comment.id)">[Delete]</a>
+								<li v-for="comment in comments" :key="comment.commentData.id">
+								{{ comment.commentData.userID }}: {{ comment.commentData.content }}
+								<a v-if="comment.commentData.userID == userID" href="javascript:" @click="deleteComment(comment.commentData.id, photo.id)">[Delete]</a>
 								</li>
 							</ul>
 							<form @submit.prevent="postComment(photo.id, newComment)">

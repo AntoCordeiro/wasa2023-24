@@ -301,7 +301,7 @@ export default {
 					  	<ul>
 							<li v-for="comment in comments" :key="comment.commentData.id">
 							{{ comment.commentData.userID }}: {{ comment.commentData.content }}
-							<a href="javascript:" @click="deleteComment(comment.commentData.id, photo.id)">[Delete]</a>
+							<a v-if="comment.commentData.userID == userID" href="javascript:" @click="deleteComment(comment.commentData.id, photo.id)">[Delete]</a>
 							</li>
 					  	</ul>
 					  	<form @submit.prevent="postComment(photo.id, newComment)">
@@ -309,8 +309,8 @@ export default {
 							  type="text"
 							  v-model="newComment"
 							  placeholder="Add a comment"
-							/>
-							<button type="submit" class="btn btn-sm btn-primary">Add Comment</button>
+							  />
+							<button type="submit" class="btn btn-sm btn-primary">Post</button>
 						  </form>						  
 					</div>
 				</div>
