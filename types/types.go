@@ -45,9 +45,9 @@ type BanListComponent struct {
 }
 
 type Like struct {
-	ID      int       `json:"id"`
-	UserID  int       `json:"userID"`
-	PhotoID int       `json:"photoID"`
+	ID      int `json:"id"`
+	UserID  int `json:"userID"`
+	PhotoID int `json:"photoID"`
 }
 
 type LikeListComponent struct {

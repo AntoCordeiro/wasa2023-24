@@ -650,14 +650,6 @@ components:
                 $ref: "#/components/schemas/Username"
           minItems: 0
           maxItems: 10000
-      
-    LikesList:
-      description: "The list of likes on a photo"
-      type: array
-      items:
-        $ref: "#/components/schemas/Like"
-      minItems: 0
-      maxItems: 10000
 
     CommentsList:
       description: "The list of comments under a photo"
