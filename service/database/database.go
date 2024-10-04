@@ -61,9 +61,8 @@ type AppDatabase interface {
 	RemoveFromBanList(userID int, bannedUsername string) error
 
 	// likes operations
-	GetLikesList(userID int, photoID int) ([]types.LikeListComponent, error)
 	AddLike(like types.Like) (int, error)
-	RemoveLike(likeID int, userID int, photoID int) error
+	RemoveLike(userID int, photoID int) error
 
 	// comments operations
 	GetCommentsList(photoID int) ([]types.CommentListComponent, error)
@@ -148,9 +147,9 @@ func New(db *sql.DB) (AppDatabase, error) {
 						ID INTEGER PRIMARY KEY AUTOINCREMENT,
 						userID  INTEGER,
 						photoID INTEGER,
-						date DATETIME,
 						FOREIGN KEY (userID) REFERENCES users(ID),
-						FOREIGN KEY (photoID) REFERENCES photos(ID));`
+						FOREIGN KEY (photoID) REFERENCES photos(ID),
+						UNIQUE (userID, photoID));`
 		_, err = db.Exec(likesTable)
 		if err != nil {
 			return nil, fmt.Errorf("error creating database structure: %w", err)

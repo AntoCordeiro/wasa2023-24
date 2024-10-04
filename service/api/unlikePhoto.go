@@ -26,15 +26,8 @@ func (rt *_router) unlikePhoto(w http.ResponseWriter, r *http.Request, ps httpro
 		return
 	}
 
-	// Get the like id from the path
-	likeID, err := strconv.Atoi(ps.ByName("likeID"))
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
 	// Remove the like from the photo and encode the returned updated likes list in the response
-	err = rt.db.RemoveLike(likeID, userObj.ID, photoID)
+	err = rt.db.RemoveLike(userObj.ID, photoID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

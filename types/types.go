@@ -48,7 +48,6 @@ type Like struct {
 	ID      int       `json:"id"`
 	UserID  int       `json:"userID"`
 	PhotoID int       `json:"photoID"`
-	Date    time.Time `json:"date"`
 }
 
 type LikeListComponent struct {

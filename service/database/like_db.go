@@ -6,7 +6,7 @@ import (
 
 func (db *appdbimpl) AddLike(like types.Like) (int, error) {
 	// Insert the like in the likes table
-	result, err := db.c.Exec("INSERT INTO likes(userID, photoID, date) VALUES (?, ?, ?) ON CONFLICT (userID, photoID) DO NOTHING", like.UserID, like.PhotoID, like.Date)
+	result, err := db.c.Exec("INSERT INTO likes(userID, photoID) VALUES (?, ?)", like.UserID, like.PhotoID)
 	if err != nil {
 		return 0, err
 	}
@@ -35,9 +35,9 @@ func (db *appdbimpl) AddLike(like types.Like) (int, error) {
 	return likeID, nil
 }
 
-func (db *appdbimpl) RemoveLike(likeID int, userID int, photoID int) error {
+func (db *appdbimpl) RemoveLike(userID int, photoID int) error {
 	// Remove the like from the likes table
-	_, err := db.c.Exec("DELETE FROM likes WHERE ID = ?", likeID)
+	_, err := db.c.Exec("DELETE FROM likes WHERE userID = ? AND photoID = ?", userID, photoID)
 	if err != nil {
 		return err
 	}
@@ -53,26 +53,4 @@ func (db *appdbimpl) RemoveLike(likeID int, userID int, photoID int) error {
 	}
 
 	return nil
-}
-
-func (db *appdbimpl) GetLikesList(userID int, photoID int) ([]types.LikeListComponent, error) {
-	// Get and return the updated likes list
-	rows, err := db.c.Query("SELECT likes.ID, username FROM likes JOIN users ON users.ID = likes.userID WHERE likes.photoID = ? ORDER BY date DESC", photoID)
-	if err != nil {
-		return nil, err
-	}
-
-	var likesList []types.LikeListComponent
-	for rows.Next() {
-		var likeObj types.LikeListComponent
-		if err := rows.Scan(&likeObj.LikeID, &likeObj.Username); err != nil {
-			return nil, err
-		}
-		likesList = append(likesList, likeObj)
-	}
-	if err = rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return likesList, nil
 }

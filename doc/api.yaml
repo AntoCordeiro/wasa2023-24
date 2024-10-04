@@ -348,31 +348,6 @@ paths:
     parameters:
       - $ref: "#/components/parameters/myUsername"
       - $ref: "#/components/parameters/photoID"
-      
-    get:
-      security: 
-        - bearerAuth: []
-      tags: ["Like"]
-      operationId: getLikes
-      summary: Get the list of likes under a photo
-      description: |
-        This function will return the list of people who liked the photo. The id
-        of the photo of which you want to retrieve the likes must be specified in
-        the path.
-      responses:
-        '200':
-          description: list of likes retrieved successfully
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/LikesList"
-        '400':
-          $ref: "#/components/responses/BadRequest"
-        '401':
-          $ref: "#/components/responses/UnauthorizedError"
-        '500':
-          $ref: "#/components/responses/InternalServerError"
-    
     post:
       security: 
         - bearerAuth: []
@@ -395,12 +370,6 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '500':
           $ref: "#/components/responses/InternalServerError"
-
-  /users/{myUsername}/photos/{photoID}/likes/{likeID}:
-    parameters:
-      - $ref: "#/components/parameters/myUsername"
-      - $ref: "#/components/parameters/photoID"
-      - $ref: "#/components/parameters/likeID"
     delete:
       security: 
         - bearerAuth: []

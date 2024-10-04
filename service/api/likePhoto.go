@@ -7,7 +7,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
@@ -33,7 +32,6 @@ func (rt *_router) likePhoto(w http.ResponseWriter, r *http.Request, ps httprout
 	likeObj := types.Like{
 		UserID:  userID,
 		PhotoID: photoID,
-		Date:    time.Now(),
 	}
 
 	likeObj.ID, err = rt.db.AddLike(likeObj)
