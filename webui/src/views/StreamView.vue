@@ -143,7 +143,7 @@
 						});
 						this.selectedFile = null;  
       					this.$refs.fileInput.value = ''; 
-						this.successfulMsg = "Photo uploaded successfully! (search your profile)"
+						this.successfulMsg = "Photo uploaded successfully! Search your profile to check it out!"
 						this.refresh()
 					} catch(e) {
 						if (e.response && e.response.status === 401) {
@@ -204,13 +204,16 @@
 		<div>
 			<div
 				class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-				<h1 class="h2">Home page</h1>
+				<h1 class="h2">{{ username }}'s stream</h1>
+				<button type="submit" class="btn btn-sm btn-primary" @click="goToSearch()">Search profile</button>
+			</div>
+			<div class="row" style="margin-bottom: 20px;">
 				<div>
+					<h5>Upload Photo: </h5>
 					<input type="file" @change="selectFile" ref="fileInput">
 					<button v-if="fileToUpload" @click="uploadPhoto">Upload Photo</button>
 					<p v-if="successfulMsg" style="color: green;">{{ successfulMsg }}</p>
 				  </div>
-				<button type="submit" class="btn btn-sm btn-primary" @click="goToSearch()">Search profile</button>
 			</div>
 			<div class="col-md-4" v-for="photo in stream" :key="photo.id">
 				<div class="card mb-4 shadow-sm">

@@ -23,6 +23,7 @@ export default {
 			fileToUpload: null,
 			successfulMsg: "",
 			emptySearch: true,
+			isFollowed: false,
 		}
 	},
 	methods: {
@@ -42,12 +43,14 @@ export default {
 					headers: {Authorization: "Bearer " + this.userID }
 				});
 				this.userProfile = response.data;
-				console.log("user profile photos " + this.userProfile.photos[0].isLiked);
 				if (this.userProfile.photos) {
 					for (let i = 0; i < this.userProfile.photos.length; i++) {
       					const photo = this.userProfile.photos[i];
      					photo.photoData = `data:image/octet-stream;base64,${photo.photoData}`; 
     				}
+				}
+				if (this.userProfile.followers && this.userProfile.followers.includes(this.username)) {
+					this.isFollowed = true	
 				}
 			} catch (e) {
 				if (e.response && e.response.status === 401) {
@@ -109,9 +112,11 @@ export default {
 		},
 		async followUser(username) {
 			try {
+				console.log(this.userProfile.followers)
 				let response = await this.$axios.post("/users/" + this.username + "/follows", { username }, {
 					headers: {Authorization: "Bearer " + this.userID, "Content-Type": "application/json" }
 				});
+				this.isFollowed = true
 				this.refresh()
 			}
 			catch(e) {
@@ -128,9 +133,11 @@ export default {
 		},
 		async unfollowUser(username) {
 			try {
+				console.log(this.userProfile.followers)
 				let response = await this.$axios.delete("/users/" + this.username + "/follows/" + username, {
 					headers: {Authorization: "Bearer " + this.userID }
 				});
+				this.isFollowed = false
 				this.refresh()
 			}
 			catch(e) {
@@ -279,21 +286,6 @@ export default {
 			  <span class="post-count" v-if="!emptySearch">Post Count: {{ userProfile.user.postCount }}</span>
 			</div>
 			<p v-else>Please refresh</p>
-			<div class="btn-toolbar mb-2 mb-md-0">
-				<div class="btn-group me-2">
-					<button v-if="!isMyProfile && !emptySearch" type="button" class="btn btn-sm btn-outline-secondary" @click="followUser(searchedUsername)">
-						Follow
-					</button>
-					<button v-if="!isMyProfile && !emptySearch" type="button" class="btn btn-sm btn-outline-secondary" @click="unfollowUser(searchedUsername)">
-						Unfollow
-					</button>
-				</div>
-				<div class="btn-group me-2">
-					<button v-if="!isMyProfile && !emptySearch" type="button" class="btn btn-sm btn-outline-primary" @click="banUser()">
-						Ban
-					</button>
-				</div>
-			</div>
 			<div>
 				<input type="text" v-model="searchQuery" placeholder="Search for a user" @keyup.enter="searchUserProfile(searchQuery)">
 				<button type="button" class="btn btn-sm btn-primary" @click="searchUserProfile(searchQuery)">Search</button>
@@ -303,6 +295,21 @@ export default {
 			</div>
 		</div>
 		<div class="row" style="margin-bottom: 20px;">
+			<div class="btn-toolbar mb-2 mb-md-0">
+				<div class="btn-group me-2">
+					<button v-if="!isMyProfile && !emptySearch && !isFollowed" type="button" class="btn btn-sm btn-outline-secondary" @click="followUser(searchedUsername)">
+						Follow
+					</button>
+					<button v-if="!isMyProfile && !emptySearch && isFollowed" type="button" class="btn btn-sm btn-outline-secondary" @click="unfollowUser(searchedUsername)">
+						Unfollow
+					</button>
+				</div>
+				<div class="btn-group me-2">
+					<button v-if="!isMyProfile && !emptySearch" type="button" class="btn btn-sm btn-outline-primary" @click="banUser()">
+						Ban
+					</button>
+				</div>
+			</div>
 			<div>
 				<h5 v-show="isMyProfile">Upload Photo: </h5>
 				<input v-show="isMyProfile" type="file" @change="selectFile" ref="fileInput">
@@ -330,7 +337,7 @@ export default {
 					<div class="card-body">
 					  	<ul>
 							<li v-for="comment in comments" :key="comment.commentData.id">
-							{{ comment.commentData.userID }}: {{ comment.commentData.content }}
+							{{ comment.commentData.username }}: {{ comment.commentData.content }}
 							<a v-if="comment.commentData.userID == userID" href="javascript:" @click="deleteComment(comment.commentData.id, photo.id)">[Delete]</a>
 							</li>
 					  	</ul>

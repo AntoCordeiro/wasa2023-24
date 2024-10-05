@@ -63,7 +63,7 @@ func (db *appdbimpl) GetCommentsList(photoID int) ([]types.CommentListComponent,
 	var commentsList []types.CommentListComponent
 	for rows.Next() {
 		var commentObj types.CommentListComponent
-		if err := rows.Scan(&commentObj.CommentData.ID, &commentObj.CommentData.UserID, &commentObj.CommentData.PhotoID, &commentObj.CommentData.Content, &commentObj.CommentData.Date, &commentObj.Username); err != nil {
+		if err := rows.Scan(&commentObj.CommentData.ID, &commentObj.CommentData.UserID, &commentObj.CommentData.PhotoID, &commentObj.CommentData.Content, &commentObj.CommentData.Date, &commentObj.CommentData.Username); err != nil {
 			return nil, err
 		}
 		commentsList = append(commentsList, commentObj)

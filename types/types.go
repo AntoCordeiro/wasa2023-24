@@ -56,11 +56,12 @@ type LikeListComponent struct {
 }
 
 type Comment struct {
-	ID      int       `json:"id"`
-	UserID  int       `json:"userID"`
-	PhotoID int       `json:"photoID"`
-	Content string    `json:"content"`
-	Date    time.Time `json:"date"`
+	ID       int       `json:"id"`
+	UserID   int       `json:"userID"`
+	Username string    `json:"username"`
+	PhotoID  int       `json:"photoID"`
+	Content  string    `json:"content"`
+	Date     time.Time `json:"date"`
 }
 
 type CommentListComponent struct {
