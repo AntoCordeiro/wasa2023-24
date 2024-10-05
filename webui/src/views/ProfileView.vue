@@ -20,6 +20,8 @@ export default {
 			newComment: "",
 			comments: [],
 			searchQuery: "",
+			fileToUpload: null,
+			successfulMsg: "",
 		}
 	},
 	methods: {
@@ -54,17 +56,23 @@ export default {
 				}
 			}
 		},
-		async uploadPhoto(event) {
-			let file = event.target.files[0];
-			if (file) {
+		async selectFile(event) {
+			this.fileToUpload = event.target.files[0];
+			this.successfulMsg = ""
+		},
+		async uploadPhoto() {
+			if (this.fileToUpload) {
 				let formData = new FormData();
-				formData.append('file', file);
+				formData.append('file', this.fileToUpload);
 
 				try {
 					let response = await this.$axios.post("/users/" + this.username + "/photos", formData, {
 					headers: {Authorization: "Bearer " + this.userID, 
 							  'Content-Type': 'multipart/form-data'}
 					});
+					this.selectedFile = null;  
+      				this.$refs.fileInput.value = ''; 
+					this.successfulMsg = "Photo uploaded successfully!"
 					this.refresh()
 				} catch(e) {
 					if (e.response && e.response.status === 401) {
@@ -265,7 +273,12 @@ export default {
 			  <span class="post-count">Post Count: {{ userProfile.user.postCount }}</span>
 			</div>
 			<p v-else>Please refresh</p>
-			<input v-if="isMyProfile" type="file" @change="uploadPhoto">
+			<div>
+				<input v-show="isMyProfile" type="file" @change="selectFile" ref="fileInput">
+				<button v-if="fileToUpload" @click="uploadPhoto">Upload Photo</button>
+				<p v-if="successfulMsg" style="color: green;">{{ successfulMsg }}</p>
+			  </div>
+
 			<div>
 				<input type="text" v-model="searchQuery" placeholder="Search for a user" @keyup.enter="searchUserProfile(searchQuery)">
 				<button type="button" class="btn btn-sm btn-primary" @click="searchUserProfile(searchQuery)">Search</button>

@@ -11,6 +11,8 @@
 				currentPhotoId: null,
 				newComment: "",
 				banList: [],
+				fileToUpload: null,
+				successfulMsg: "",
 			}
 		},
 		methods: {
@@ -125,29 +127,34 @@
 				}
 				}
 			},
-			async uploadPhoto(event) {
-				let file = event.target.files[0];
-				if (file) {
+			async selectFile(event) {
+				this.fileToUpload = event.target.files[0];
+				this.successfulMsg = ""
+			},
+			async uploadPhoto() {
+				if (this.fileToUpload) {
 					let formData = new FormData();
-					formData.append('file', file);
+					formData.append('file', this.fileToUpload);
 
 					try {
 						let response = await this.$axios.post("/users/" + this.username + "/photos", formData, {
 						headers: {Authorization: "Bearer " + this.userID, 
 								  'Content-Type': 'multipart/form-data'}
 						});
+						this.selectedFile = null;  
+      					this.$refs.fileInput.value = ''; 
+						this.successfulMsg = "Photo uploaded successfully! (search your profile)"
 						this.refresh()
 					} catch(e) {
 						if (e.response && e.response.status === 401) {
-							this.errormsg = "Status Unauthorized"
-						} else if (e.response && e.response.status === 400) {
-							this.errormsg = "Status Bad Request"
-						} else if (e.response && e.response.status === 500) {
-							this.errormsg = "Status Internal Server Error"
-						} else {
-							this.errormsg = e.toString();
-						}
-					}
+						this.errormsg = "Status Unauthorized"
+					} else if (e.response && e.response.status === 400) {
+						this.errormsg = "Status Bad Request"
+					} else if (e.response && e.response.status === 500) {
+						this.errormsg = "Status Internal Server Error"
+					} else {
+						this.errormsg = e.toString();
+					}}
 				}
 			},
 		},
@@ -162,7 +169,11 @@
 			<div
 				class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 				<h1 class="h2">Home page</h1>
-				<input type="file" @change="uploadPhoto">
+				<div>
+					<input type="file" @change="selectFile" ref="fileInput">
+					<button v-if="fileToUpload" @click="uploadPhoto">Upload Photo</button>
+					<p v-if="successfulMsg" style="color: green;">{{ successfulMsg }}</p>
+				  </div>
 				<button type="submit" class="btn btn-sm btn-primary" @click="goToSearch()">Search profile</button>
 			</div>
 			<div class="col-md-4" v-for="photo in stream" :key="photo.id">
