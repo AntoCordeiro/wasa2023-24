@@ -22,16 +22,6 @@ func (db *appdbimpl) AddComment(comment types.Comment) (int, error) {
 		return 0, err
 	}
 
-	// Update the comments count of the photo in the phtos table
-	out, err := db.c.Exec("UPDATE photos SET commentsCount = commentsCount + 1 WHERE ID = ?", comment.PhotoID)
-	if err != nil {
-		return 0, err
-	}
-	affectedRows, err := out.RowsAffected()
-	if err != nil || affectedRows == 0 {
-		return 0, err
-	}
-
 	return commentID, nil
 }
 
@@ -39,15 +29,6 @@ func (db *appdbimpl) RemoveComment(userID int, photoID int, commentID int) error
 	// Try inserting the username into the database
 	_, err := db.c.Exec("DELETE FROM comments WHERE ID = ? AND userID = ?", commentID, userID)
 	if err != nil {
-		return err
-	}
-
-	out, err := db.c.Exec("UPDATE photos SET commentsCount = commentsCount - 1 WHERE ID = ?", photoID)
-	if err != nil {
-		return err
-	}
-	affectedRows, err := out.RowsAffected()
-	if err != nil || affectedRows == 0 {
 		return err
 	}
 
