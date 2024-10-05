@@ -251,7 +251,7 @@
 				<p v-if="banList">List of banned users</p>
 				<li v-for="ban in banList" :key="ban.banID">
 				{{ ban.banID }}: {{ ban.username }}
-				<a href="javascript:" @click="unbanUser(ban.username)">[Delete]</a>
+				<a href="javascript:" @click="unbanUser(ban.username)">[Unban]</a>
 				</li>
 			</ul>
 			
