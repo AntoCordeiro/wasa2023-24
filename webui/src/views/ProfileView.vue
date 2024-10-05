@@ -320,6 +320,7 @@ export default {
             <div class="card mb-4 shadow-sm">
                 <img class="card-img-top" :src=photo.photoData alt="Card image cap">
 				<div class="card-body">
+					<p class="card-text">Uploaded by: {{ photo.username }}</p>
 					<p class="card-text">Uploaded on: {{ photo.uploadDate }}</p>
 					<button v-if="!photo.isLiked" type="button" class="btn btn-sm btn-outline-primary" @click=LikePhoto(photo.id)>Like</button>
       				<button v-if="photo.isLiked" type="button" class="btn btn-sm btn-outline-primary" @click="UnLikePhoto(photo.id)">Unlike</button>

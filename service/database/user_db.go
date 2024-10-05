@@ -126,6 +126,7 @@ func (db *appdbimpl) GetProfile(myUserID int, profileUsername string) (types.Use
 		if err != nil {
 			return types.UserProfile{}, err
 		}
+		photo.Username = profileUsername
 		photosList = append(photosList, photo)
 	}
 	if err = rows.Err(); err != nil {
@@ -178,6 +179,10 @@ func (db *appdbimpl) GetStream(userID int) ([]types.Photo, error) {
 			return nil, err
 		}
 		err = db.c.QueryRow("SELECT COUNT(*) FROM likes WHERE photoID = ? AND userID NOT IN (SELECT bannedID FROM bans WHERE userID = ?)", photo.ID, userID).Scan(&photo.LikesCount)
+		if err != nil {
+			return nil, err
+		}
+		err = db.c.QueryRow("SELECT username FROM users WHERE ID = ?", photo.UserID).Scan(&photo.Username)
 		if err != nil {
 			return nil, err
 		}
