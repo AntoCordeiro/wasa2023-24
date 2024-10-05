@@ -65,7 +65,7 @@ type AppDatabase interface {
 	RemoveLike(userID int, photoID int) error
 
 	// comments operations
-	GetCommentsList(photoID int) ([]types.CommentListComponent, error)
+	GetCommentsList(myUserID int, photoID int) ([]types.CommentListComponent, error)
 	AddComment(comment types.Comment) (int, error)
 	RemoveComment(userID int, photoID int, commentID int) error
 
@@ -104,8 +104,6 @@ func New(db *sql.DB) (AppDatabase, error) {
 						userID  VARCHAR(16),
 						photoData BLOB,
 						uploadDate DATETIME,
-						likesCount INTEGER,
-						commentsCount INTEGER,
 						FOREIGN KEY (userID) REFERENCES users(ID));`
 		_, err = db.Exec(photosTable)
 		if err != nil {

@@ -11,30 +11,6 @@ func (db *appdbimpl) AddToBanList(userID int, userIDToBan int) error {
 		return err
 	}
 
-	// Stop following
-	_, err = db.c.Exec("DELETE FROM follows WHERE userID = ? AND followsUserID = ?", userID, userIDToBan)
-	if err != nil {
-		return err
-	}
-
-	// Stop being followed
-	_, err = db.c.Exec("DELETE FROM follows WHERE userID = ? AND followsUserID = ?", userIDToBan, userID)
-	if err != nil {
-		return err
-	}
-
-	// Delete comments of banned user under the logged in user's photos
-	_, err = db.c.Exec("DELETE FROM comments WHERE userID = ? AND photoID IN (SELECT ID FROM photos WHERE userID = ?)", userIDToBan, userID)
-	if err != nil {
-		return err
-	}
-
-	// Delete likes of banned user on the logged in user's photos
-	_, err = db.c.Exec("DELETE FROM likes WHERE userID = ? AND photoID IN (SELECT ID FROM photos WHERE userID = ?)", userIDToBan, userID)
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 

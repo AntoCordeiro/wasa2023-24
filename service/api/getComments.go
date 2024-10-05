@@ -28,7 +28,7 @@ func (rt *_router) getComments(w http.ResponseWriter, r *http.Request, ps httpro
 	}
 
 	// Get the comments list under the photo and encode it in the response
-	commentsList, err := rt.db.GetCommentsList(photoID)
+	commentsList, err := rt.db.GetCommentsList(userID, photoID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

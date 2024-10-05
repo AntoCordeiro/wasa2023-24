@@ -29,7 +29,6 @@ export default {
 	methods: {
 		async refresh() {
 			this.errormsg = null
-			this.successfulMsg = ""
 			try {
 				if (this.searchedUsername != "") {
 					this.emptySearch = false

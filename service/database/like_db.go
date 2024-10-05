@@ -22,16 +22,6 @@ func (db *appdbimpl) AddLike(like types.Like) (int, error) {
 		return 0, err
 	}
 
-	// Increase the likes count of the photo in the photos table
-	out, err := db.c.Exec("UPDATE photos SET likesCount = likesCount + 1 WHERE ID = ?", like.PhotoID)
-	if err != nil {
-		return 0, err
-	}
-	affectedRows, err := out.RowsAffected()
-	if err != nil || affectedRows == 0 {
-		return 0, err
-	}
-
 	return likeID, nil
 }
 
@@ -39,16 +29,6 @@ func (db *appdbimpl) RemoveLike(userID int, photoID int) error {
 	// Remove the like from the likes table
 	_, err := db.c.Exec("DELETE FROM likes WHERE userID = ? AND photoID = ?", userID, photoID)
 	if err != nil {
-		return err
-	}
-
-	// Update the likes count of the photo in the photos table
-	out, err := db.c.Exec("UPDATE photos SET likesCount = likesCount - 1 WHERE ID = ?", photoID)
-	if err != nil {
-		return err
-	}
-	affectedRows, err := out.RowsAffected()
-	if err != nil || affectedRows == 0 {
 		return err
 	}
 

@@ -96,7 +96,7 @@ func (db *appdbimpl) GetProfile(myUserID int, profileUsername string) (types.Use
 	}
 
 	// Get photos uploaded by the user
-	rows, err := db.c.Query("SELECT ID, userID, photoData, uploadDate, likesCount, commentsCount FROM photos WHERE userID = ? ORDER BY uploadDate DESC", user.ID)
+	rows, err := db.c.Query("SELECT ID, userID, photoData, uploadDate FROM photos WHERE userID = ? ORDER BY uploadDate DESC", user.ID)
 	if err != nil {
 		return types.UserProfile{}, err
 	}
@@ -105,7 +105,7 @@ func (db *appdbimpl) GetProfile(myUserID int, profileUsername string) (types.Use
 	var photosList []types.Photo
 	for rows.Next() {
 		var photo types.Photo
-		if err := rows.Scan(&photo.ID, &photo.UserID, &photo.PhotoData, &photo.UploadDate, &photo.LikesCount, &photo.CommentsCount); err != nil {
+		if err := rows.Scan(&photo.ID, &photo.UserID, &photo.PhotoData, &photo.UploadDate); err != nil {
 			return types.UserProfile{}, err
 		}
 		var exists bool
@@ -117,6 +117,14 @@ func (db *appdbimpl) GetProfile(myUserID int, profileUsername string) (types.Use
 			photo.IsLiked = true
 		} else {
 			photo.IsLiked = false
+		}
+		err = db.c.QueryRow("SELECT COUNT(*) FROM comments WHERE photoID = ? AND userID NOT IN (SELECT bannedID FROM bans WHERE userID = ?)", photo.ID, myUserID).Scan(&photo.CommentsCount)
+		if err != nil {
+			return types.UserProfile{}, err
+		}
+		err = db.c.QueryRow("SELECT COUNT(*) FROM likes WHERE photoID = ? AND userID NOT IN (SELECT bannedID FROM bans WHERE userID = ?)", photo.ID, myUserID).Scan(&photo.LikesCount)
+		if err != nil {
+			return types.UserProfile{}, err
 		}
 		photosList = append(photosList, photo)
 	}
@@ -143,7 +151,7 @@ func (db *appdbimpl) GetID(username string) (int, error) {
 
 func (db *appdbimpl) GetStream(userID int) ([]types.Photo, error) {
 	// Get the list of photos posted by users who the logged in user follows
-	rows, err := db.c.Query("SELECT ID, userID, photoData, uploadDate, likesCount, commentsCount FROM photos WHERE userID IN (SELECT followsUserID FROM follows WHERE userID = ?) ORDER BY uploadDate DESC", userID)
+	rows, err := db.c.Query("SELECT ID, userID, photoData, uploadDate FROM photos WHERE userID IN (SELECT followsUserID FROM follows WHERE userID = ?) AND userID NOT IN (SELECT bannedID FROM bans WHERE userID = ?) ORDER BY uploadDate DESC", userID, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +160,7 @@ func (db *appdbimpl) GetStream(userID int) ([]types.Photo, error) {
 	var MyStream []types.Photo
 	for rows.Next() {
 		var photo types.Photo
-		if err := rows.Scan(&photo.ID, &photo.UserID, &photo.PhotoData, &photo.UploadDate, &photo.LikesCount, &photo.CommentsCount); err != nil {
+		if err := rows.Scan(&photo.ID, &photo.UserID, &photo.PhotoData, &photo.UploadDate); err != nil {
 			return nil, err
 		}
 		var exists bool
@@ -164,6 +172,14 @@ func (db *appdbimpl) GetStream(userID int) ([]types.Photo, error) {
 			photo.IsLiked = true
 		} else {
 			photo.IsLiked = false
+		}
+		err = db.c.QueryRow("SELECT COUNT(*) FROM comments WHERE photoID = ? AND userID NOT IN (SELECT bannedID FROM bans WHERE userID = ?)", photo.ID, userID).Scan(&photo.CommentsCount)
+		if err != nil {
+			return nil, err
+		}
+		err = db.c.QueryRow("SELECT COUNT(*) FROM likes WHERE photoID = ? AND userID NOT IN (SELECT bannedID FROM bans WHERE userID = ?)", photo.ID, userID).Scan(&photo.LikesCount)
+		if err != nil {
+			return nil, err
 		}
 		MyStream = append(MyStream, photo)
 	}
