@@ -20,7 +20,7 @@ func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps htt
 	}
 
 	// Get the profile of the user specified in the path and encode it in the response
-	userProfile, err := rt.db.GetProfile(ps.ByName("profileUsername"))
+	userProfile, err := rt.db.GetProfile(userID, ps.ByName("profileUsername"))
 	if err != nil {
 		http.Error(w, "getprofile"+err.Error(), http.StatusInternalServerError)
 		return

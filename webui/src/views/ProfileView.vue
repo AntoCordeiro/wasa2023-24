@@ -22,12 +22,16 @@ export default {
 			searchQuery: "",
 			fileToUpload: null,
 			successfulMsg: "",
+			emptySearch: true,
 		}
 	},
 	methods: {
 		async refresh() {
 			this.errormsg = null
 			try {
+				if (this.searchedUsername != "") {
+					this.emptySearch = false
+				}
 				if (this.searchedUsername === this.username) {
 					this.isMyProfile = true
 				} else {
@@ -37,14 +41,13 @@ export default {
 					headers: {Authorization: "Bearer " + this.userID }
 				});
 				this.userProfile = response.data;
-				console.log(this.userProfile);
+				console.log("user profile photos " + this.userProfile.photos[0].isLiked);
 				if (this.userProfile.photos) {
 					for (let i = 0; i < this.userProfile.photos.length; i++) {
       					const photo = this.userProfile.photos[i];
      					photo.photoData = `data:image/octet-stream;base64,${photo.photoData}`; 
     				}
 				}
-				console.log("changed phtos:", this.userProfile);
 			} catch (e) {
 				if (e.response && e.response.status === 401) {
 					this.errormsg = "Status Unauthorized"
@@ -270,7 +273,7 @@ export default {
 		<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 			<div v-if="userProfile.user">
 			  <h1 class="h2">{{ userProfile.user.username }}</h1>
-			  <span class="post-count">Post Count: {{ userProfile.user.postCount }}</span>
+			  <span class="post-count" v-if="!emptySearch">Post Count: {{ userProfile.user.postCount }}</span>
 			</div>
 			<p v-else>Please refresh</p>
 			<div>
@@ -285,33 +288,19 @@ export default {
 			</div>
 			<div class="btn-toolbar mb-2 mb-md-0">
 				<div class="btn-group me-2">
-					<button v-if="!isMyProfile" type="button" class="btn btn-sm btn-outline-secondary" @click="followUser(searchedUsername)">
+					<button v-if="!isMyProfile && !emptySearch" type="button" class="btn btn-sm btn-outline-secondary" @click="followUser(searchedUsername)">
 						Follow
 					</button>
-					<button v-if="!isMyProfile" type="button" class="btn btn-sm btn-outline-secondary" @click="unfollowUser(searchedUsername)">
+					<button v-if="!isMyProfile && !emptySearch" type="button" class="btn btn-sm btn-outline-secondary" @click="unfollowUser(searchedUsername)">
 						Unfollow
 					</button>
 				</div>
 				<div class="btn-group me-2">
-					<button v-if="!isMyProfile" type="button" class="btn btn-sm btn-outline-primary" @click="banUser()">
+					<button v-if="!isMyProfile && !emptySearch" type="button" class="btn btn-sm btn-outline-primary" @click="banUser()">
 						Ban
 					</button>
 				</div>
 			</div>
-		</div>
-		<div class="Row">
-			<h2>Follows</h2>
-    		<ul>
-      			<li v-for="follow in userProfile.follows" :key="follow">
-        		{{ follow }}
-      			</li>
-    		</ul>
-			<h2>Followers</h2>
-    		<ul>
-      			<li v-for="follower in userProfile.followers" :key="follower">
-        		{{ follower }}
-      			</li>
-    		</ul>
 		</div>
 		<div class="col-md-4" v-for="photo in userProfile.photos" :key="photo.id">
             <div class="card mb-4 shadow-sm">
@@ -348,6 +337,20 @@ export default {
 					</div>
 				</div>
 			</div>
+		</div>
+		<div class="Row">
+			<h2 v-if="!emptySearch">Follows</h2>
+    		<ul>
+      			<li v-for="follow in userProfile.follows" :key="follow">
+        		{{ follow }}
+      			</li>
+    		</ul>
+			<h2 v-if="!emptySearch">Followers</h2>
+    		<ul>
+      			<li v-for="follower in userProfile.followers" :key="follower">
+        		{{ follower }}
+      			</li>
+    		</ul>
 		</div>
 		<ErrorMsg v-if="errormsg" :msg="errormsg"></ErrorMsg>
 	</div>

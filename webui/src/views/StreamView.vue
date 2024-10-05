@@ -157,6 +157,42 @@
 					}}
 				}
 			},
+			async UnLikePhoto(photoID) {
+				try {
+					let response = await this.$axios.delete("/users/" + this.username + "/photos/" + photoID + "/likes", {
+						headers: {Authorization: "Bearer " + this.userID }
+						});
+				    this.refresh();
+				} catch(e) {
+					if (e.response && e.response.status === 401) {
+					this.errormsg = "Status Unauthorized"
+					} else if (e.response && e.response.status === 400) {
+						this.errormsg = "Status Bad Request"
+					} else if (e.response && e.response.status === 500) {
+						this.errormsg = "Status Internal Server Error"
+					} else {
+						this.errormsg = e.toString();
+					}
+				}
+			},
+			async LikePhoto(photoID) {
+				try {
+					let response = await this.$axios.post("/users/" + this.username + "/photos/" + photoID + "/likes", {}, {
+						headers: {Authorization: "Bearer " + this.userID}
+					});
+				    this.refresh();
+				} catch(e) {
+					if (e.response && e.response.status === 401) {
+						this.errormsg = "Status Unauthorized"
+					} else if (e.response && e.response.status === 400) {
+						this.errormsg = "Status Bad Request"
+					} else if (e.response && e.response.status === 500) {
+						this.errormsg = "Status Internal Server Error"
+					} else {
+						this.errormsg = e.toString();
+					}
+				}
+			},
 		},
 		mounted() {
 			this.refresh()
@@ -181,8 +217,8 @@
 					<img class="card-img-top" :src=photo.photoData alt="Card image cap">
 					<div class="card-body">
 						<p class="card-text">Uploaded on: {{ photo.uploadDate }}</p>
-						<button v-if="!photo.isLiked" type="button" class="btn btn-sm btn-outline-primary">Like</button>
-						<button v-if="photo.isLiked" type="button" class="btn btn-sm btn-outline-primary">Unlike</button>
+						<button v-if="!photo.isLiked" type="button" class="btn btn-sm btn-outline-primary" @click=LikePhoto(photo.id)>Like</button>
+      				<button v-if="photo.isLiked" type="button" class="btn btn-sm btn-outline-primary" @click="UnLikePhoto(photo.id)">Unlike</button>
 						<button type="button" class="btn btn-sm btn-outline-primary" @click=getComments(photo.id)>Comments</button>
 						<span>Likes: {{ photo.likesCount }}</span><br>
 						<span>Comments: {{ photo.commentsCount }}</span><br>

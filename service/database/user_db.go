@@ -50,7 +50,7 @@ func (db *appdbimpl) UpdateUsername(oldUsername string, newUsername string) erro
 	return nil
 }
 
-func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, error) {
+func (db *appdbimpl) GetProfile(myUserID int, profileUsername string) (types.UserProfile, error) {
 	// Get the user informations from the users table
 	var user types.User
 	if err := db.c.QueryRow("SELECT ID, username, postCount FROM users WHERE username = ?", profileUsername).Scan(&user.ID, &user.Username, &user.PostCount); err != nil {
@@ -109,7 +109,7 @@ func (db *appdbimpl) GetProfile(profileUsername string) (types.UserProfile, erro
 			return types.UserProfile{}, err
 		}
 		var exists bool
-		err = db.c.QueryRow("SELECT EXISTS (SELECT 1 FROM likes WHERE userID = ? AND photoID = ?)", user.ID, photo.ID).Scan(&exists)
+		err = db.c.QueryRow("SELECT EXISTS (SELECT 1 FROM likes WHERE userID = ? AND photoID = ?)", myUserID, photo.ID).Scan(&exists)
 		if err != nil {
 			return types.UserProfile{}, err
 		}

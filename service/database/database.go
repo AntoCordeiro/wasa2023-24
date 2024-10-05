@@ -43,7 +43,7 @@ type AppDatabase interface {
 	UserFirstLogin(username string) (types.User, error)
 	UserLogin(userID int, username string) (types.User, error)
 	UpdateUsername(oldUsername string, newUsername string) error
-	GetProfile(profileUsername string) (types.UserProfile, error)
+	GetProfile(myUserID int, profileUsername string) (types.UserProfile, error)
 	GetID(username string) (int, error)
 	GetStream(userID int) ([]types.Photo, error)
 
