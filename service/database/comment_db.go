@@ -36,7 +36,7 @@ func (db *appdbimpl) RemoveComment(userID int, photoID int, commentID int) error
 }
 
 func (db *appdbimpl) GetCommentsList(myUserID int, photoID int) ([]types.CommentListComponent, error) {
-	rows, err := db.c.Query("SELECT comments.ID, userID, photoID, content, date, username FROM comments JOIN users ON users.ID = comments.userID WHERE comments.photoID = ? AND userID NOT IN (SELECT bannedID FROM bans WHERE userID = ?)  ORDER BY date DESC", photoID, myUserID)
+	rows, err := db.c.Query("SELECT comments.ID, userID, photoID, content, date, username FROM comments JOIN users ON users.ID = comments.userID WHERE comments.photoID = ? AND userID NOT IN (SELECT bannedID FROM bans WHERE userID = ?)", photoID, myUserID)
 	if err != nil {
 		return nil, err
 	}

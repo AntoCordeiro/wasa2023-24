@@ -235,7 +235,7 @@
 						<div class="card-body">
 							<ul>
 								<li v-for="comment in comments" :key="comment.commentData.id">
-								{{ comment.commentData.userID }}: {{ comment.commentData.content }}
+								{{ comment.commentData.username }}: {{ comment.commentData.content }}
 								<a v-if="comment.commentData.userID == userID" href="javascript:" @click="deleteComment(comment.commentData.id, photo.id)">[Delete]</a>
 								</li>
 							</ul>
