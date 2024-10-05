@@ -264,7 +264,8 @@ export default {
 					this.errormsg = "Status Internal Server Error"
 				} else {
 					this.errormsg = e.toString();
-				}}
+				}
+			}
 		},
 		async goToMyStream() {
 			this.$router.push({ path: "/myStream"})
@@ -309,12 +310,12 @@ export default {
 					</button>
 				</div>
 			</div>
-			<div>
+			<div style="margin-bottom: 20px;">
 				<h5 v-show="isMyProfile">Upload Photo: </h5>
 				<input v-show="isMyProfile" type="file" @change="selectFile" ref="fileInput">
 				<button v-if="fileToUpload" @click="uploadPhoto">Upload Photo</button>
 				<p v-if="successfulMsg" style="color: green;">{{ successfulMsg }}</p>
-			  </div>
+			</div>
 		</div>
 		<div class="col-md-4" v-for="photo in userProfile.photos" :key="photo.id">
             <div class="card mb-4 shadow-sm">

@@ -10,9 +10,11 @@
 				showComments: false,
 				currentPhotoId: null,
 				newComment: "",
+				newUsername: "",
 				banList: [],
 				fileToUpload: null,
 				successfulMsg: "",
+				successfulMsg2: "",
 			}
 		},
 		methods: {
@@ -193,6 +195,28 @@
 					}
 				}
 			},
+			async changeUsername(newUsername) {
+				try {
+					let response = await this.$axios.put("/users/" + this.username + "/username", { "username":newUsername }, {
+						headers: {Authorization: "Bearer " + this.userID, "Content-Type": "application/json"}
+					});
+					localStorage.setItem("username", newUsername)
+					this.username = newUsername
+					this.newUsername = ""
+					this.successfulMsg2 = "Username changed successfully!"
+				    this.refresh();
+				} catch(e) {
+					if (e.response && e.response.status === 401) {
+						this.errormsg = "Status Unauthorized"
+					} else if (e.response && e.response.status === 400) {
+						this.errormsg = "Status Bad Request"
+					} else if (e.response && e.response.status === 500) {
+						this.errormsg = "Status Internal Server Error"
+					} else {
+						this.errormsg = e.toString();
+					}
+				}
+			},
 		},
 		mounted() {
 			this.refresh()
@@ -208,11 +232,19 @@
 				<button type="submit" class="btn btn-sm btn-primary" @click="goToSearch()">Search profile</button>
 			</div>
 			<div class="row" style="margin-bottom: 20px;">
-				<div>
+				<div style="margin-bottom: 20px;">
 					<h5>Upload Photo: </h5>
 					<input type="file" @change="selectFile" ref="fileInput">
 					<button v-if="fileToUpload" @click="uploadPhoto">Upload Photo</button>
 					<p v-if="successfulMsg" style="color: green;">{{ successfulMsg }}</p>
+				  </div>
+				<div style="margin-bottom: 20px;">
+					<h5>Change username: </h5>
+					<div style="margin-bottom: 5px;">
+						<input type="text" v-model="newUsername" placeholder="New username" @keyup.enter="changeUsername(newUsername)">
+						<button type="button" @click="changeUsername(newUsername)">Submit</button>
+					</div>
+					<p v-if="successfulMsg2" style="color: green;">{{ successfulMsg2 }}</p>
 				  </div>
 			</div>
 			<div class="col-md-4" v-for="photo in stream" :key="photo.id">
