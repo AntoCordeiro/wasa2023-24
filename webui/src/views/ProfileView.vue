@@ -28,6 +28,7 @@ export default {
 	methods: {
 		async refresh() {
 			this.errormsg = null
+			this.successfulMsg = ""
 			try {
 				if (this.searchedUsername != "") {
 					this.emptySearch = false
@@ -259,7 +260,9 @@ export default {
 					this.errormsg = e.toString();
 				}}
 		},
-
+		async goToMyStream() {
+			this.$router.push({ path: "/myStream"})
+		},
 	mounted() {
 		this.refresh()
 	},
@@ -276,16 +279,6 @@ export default {
 			  <span class="post-count" v-if="!emptySearch">Post Count: {{ userProfile.user.postCount }}</span>
 			</div>
 			<p v-else>Please refresh</p>
-			<div>
-				<input v-show="isMyProfile" type="file" @change="selectFile" ref="fileInput">
-				<button v-if="fileToUpload" @click="uploadPhoto">Upload Photo</button>
-				<p v-if="successfulMsg" style="color: green;">{{ successfulMsg }}</p>
-			  </div>
-
-			<div>
-				<input type="text" v-model="searchQuery" placeholder="Search for a user" @keyup.enter="searchUserProfile(searchQuery)">
-				<button type="button" class="btn btn-sm btn-primary" @click="searchUserProfile(searchQuery)">Search</button>
-			</div>
 			<div class="btn-toolbar mb-2 mb-md-0">
 				<div class="btn-group me-2">
 					<button v-if="!isMyProfile && !emptySearch" type="button" class="btn btn-sm btn-outline-secondary" @click="followUser(searchedUsername)">
@@ -301,6 +294,21 @@ export default {
 					</button>
 				</div>
 			</div>
+			<div>
+				<input type="text" v-model="searchQuery" placeholder="Search for a user" @keyup.enter="searchUserProfile(searchQuery)">
+				<button type="button" class="btn btn-sm btn-primary" @click="searchUserProfile(searchQuery)">Search</button>
+			</div>
+			<div>
+				<button type="button" class="btn btn-sm btn-primary" @click="goToMyStream">My Stream</button>
+			</div>
+		</div>
+		<div class="row" style="margin-bottom: 20px;">
+			<div>
+				<h5 v-show="isMyProfile">Upload Photo: </h5>
+				<input v-show="isMyProfile" type="file" @change="selectFile" ref="fileInput">
+				<button v-if="fileToUpload" @click="uploadPhoto">Upload Photo</button>
+				<p v-if="successfulMsg" style="color: green;">{{ successfulMsg }}</p>
+			  </div>
 		</div>
 		<div class="col-md-4" v-for="photo in userProfile.photos" :key="photo.id">
             <div class="card mb-4 shadow-sm">
