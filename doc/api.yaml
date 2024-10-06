@@ -370,6 +370,12 @@ paths:
           $ref: "#/components/responses/UnauthorizedError"
         '500':
           $ref: "#/components/responses/InternalServerError"
+          
+  /users/{myUsername}/photos/{photoID}/likes/{likeID}:
+    parameters:
+      - $ref: "#/components/parameters/myUsername"
+      - $ref: "#/components/parameters/photoID"
+      - $ref: "#/components/parameters/likeID"
     delete:
       security: 
         - bearerAuth: []

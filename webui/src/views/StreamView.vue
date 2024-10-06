@@ -15,6 +15,7 @@
 				fileToUpload: null,
 				successfulMsg: "",
 				successfulMsg2: "",
+				usernameTakenMsg: "",
 			}
 		},
 		methods: {
@@ -34,7 +35,6 @@
 					headers: {Authorization: "Bearer " + this.userID }
 					});
 					this.banList = banResponse.data
-					console.log(banResponse.data)
 				} catch (e) {
 					if (e.response && e.response.status === 401) {
 					this.errormsg = "Status Unauthorized"
@@ -161,7 +161,7 @@
 			},
 			async UnLikePhoto(photoID) {
 				try {
-					let response = await this.$axios.delete("/users/" + this.username + "/photos/" + photoID + "/likes", {
+					let response = await this.$axios.delete("/users/" + this.username + "/photos/" + photoID + "/likes/1", {
 						headers: {Authorization: "Bearer " + this.userID }
 						});
 				    this.refresh();
@@ -204,6 +204,8 @@
 					this.username = newUsername
 					this.newUsername = ""
 					this.successfulMsg2 = "Username changed successfully!"
+					this.usernameTakenMsg = ""
+					this.showComments = false
 				    this.refresh();
 				} catch(e) {
 					if (e.response && e.response.status === 401) {
@@ -211,7 +213,9 @@
 					} else if (e.response && e.response.status === 400) {
 						this.errormsg = "Status Bad Request"
 					} else if (e.response && e.response.status === 500) {
-						this.errormsg = "Status Internal Server Error"
+						this.usernameTakenMsg = "This username is already taken"
+						this.newUsername = ""
+						this.successfulMsg2 = ""
 					} else {
 						this.errormsg = e.toString();
 					}
@@ -245,6 +249,7 @@
 						<button type="button" @click="changeUsername(newUsername)">Submit</button>
 					</div>
 					<p v-if="successfulMsg2" style="color: green;">{{ successfulMsg2 }}</p>
+					<p v-if="usernameTakenMsg" style="color: red;">{{ usernameTakenMsg }}</p>
 				  </div>
 			</div>
 			<div class="col-md-4" v-for="photo in stream" :key="photo.id">

@@ -6,7 +6,7 @@ import (
 
 func (db *appdbimpl) UserFirstLogin(username string) (types.User, error) {
 	// Insert the user in the database and get the assigned user id
-	result, err := db.c.Exec("INSERT INTO users(username) VALUES (?)", username) //fix beacause if error is unique constraint it should retrieve the user anyway
+	result, err := db.c.Exec("INSERT INTO users(username) VALUES (?)", username)
 	if err != nil {
 		var user types.User
 		if err := db.c.QueryRow("SELECT username, ID, postCount FROM users WHERE username = ?", username).Scan(&user.Username, &user.ID, &user.PostCount); err != nil {
@@ -152,7 +152,7 @@ func (db *appdbimpl) GetID(username string) (int, error) {
 
 func (db *appdbimpl) GetStream(userID int) ([]types.Photo, error) {
 	// Get the list of photos posted by users who the logged in user follows
-	rows, err := db.c.Query("SELECT ID, userID, photoData, uploadDate FROM photos WHERE userID IN (SELECT followsUserID FROM follows WHERE userID = ?) AND userID NOT IN (SELECT bannedID FROM bans WHERE userID = ?) ORDER BY uploadDate DESC", userID, userID)
+	rows, err := db.c.Query("SELECT ID, userID, photoData, uploadDate FROM photos WHERE userID IN (SELECT followsUserID FROM follows WHERE userID = ?) AND userID NOT IN (SELECT bannedID FROM bans WHERE userID = ?) AND userID NOT IN (SELECT userID FROM bans WHERE bannedID = ?) ORDER BY uploadDate DESC", userID, userID, userID)
 	if err != nil {
 		return nil, err
 	}

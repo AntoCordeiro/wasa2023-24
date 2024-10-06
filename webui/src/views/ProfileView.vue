@@ -30,6 +30,9 @@ export default {
 		async refresh() {
 			this.errormsg = null
 			try {
+				let response = await this.$axios.get("/users/" + this.username + "/profiles/" + this.searchedUsername, {
+					headers: {Authorization: "Bearer " + this.userID }
+				});
 				if (this.searchedUsername != "") {
 					this.emptySearch = false
 				}
@@ -38,9 +41,7 @@ export default {
 				} else {
 					this.isMyProfile = false
 				}
-				let response = await this.$axios.get("/users/" + this.username + "/profiles/" + this.searchedUsername, {
-					headers: {Authorization: "Bearer " + this.userID }
-				});
+				
 				this.userProfile = response.data;
 				if (this.userProfile.photos) {
 					for (let i = 0; i < this.userProfile.photos.length; i++) {
@@ -56,8 +57,9 @@ export default {
 					this.errormsg = "Status Unauthorized"
 				} else if (e.response && e.response.status === 500) {
 					this.errormsg = "Status Internal Server Error"
-				}
-				else {
+				} else if (e.response && e.response.status === 404) {
+					this.errormsg = "Status Not Found: can't find the user you are looking for"
+				} else {
 					this.errormsg = e.toString();
 				}
 			}
@@ -251,7 +253,7 @@ export default {
 		},
 		async UnLikePhoto(photoID) {
 			try {
-				let response = await this.$axios.delete("/users/" + this.username + "/photos/" + photoID + "/likes", {
+				let response = await this.$axios.delete("/users/" + this.username + "/photos/" + photoID + "/likes/1", {
 					headers: {Authorization: "Bearer " + this.userID }
 					});
 			    this.refresh();
