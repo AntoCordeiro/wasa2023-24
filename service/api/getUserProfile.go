@@ -3,10 +3,10 @@ package api
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"git.sapienzaapps.it/fantasticcoffee/fantastic-coffee-decaffeinated/service/api/reqcontext"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
-	"errors"
 )
 
 func (rt *_router) getUserProfile(w http.ResponseWriter, r *http.Request, ps httprouter.Params, ctx reqcontext.RequestContext) {
